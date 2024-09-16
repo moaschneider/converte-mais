@@ -29,6 +29,14 @@
         .margin {
             margin: 0 auto;
             width: var(--largura);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+        }
+        .author {
+            font-size: 14px;
+            opacity: 0.8;
         }
         #textInput {
             width: 100%;
@@ -113,7 +121,6 @@
         opacity: 0;
         transition: opacity .8s;
         }
-
         .tooltip:hover .tooltiptext {
         visibility: visible;
         opacity: 1;
@@ -123,52 +130,54 @@
 <body>
 
     <div class="margin">
-        <h1>Conversor 1.2</h1>
-        
-        <!-- <label for="textInput">Conversão de texto</label><br> -->
-        <textarea id="textInput" rows="10" cols="50" placeholder="Use (p) para separar parágrafos, ** para negrito, * para itálico, (ul) para lista não ordenada, (ol) para lista ordenada"></textarea><br><br>
-        <div class="buttons">
-            <div>
-                <button id="copyPButton" class="tooltip">Parágrafo
-                    <span class="tooltiptext">Ctrl + S</span>
-                </button>
-                <button id="copyUlButton" class="tooltip">UL
-                    <span class="tooltiptext">Ctrl + D</span>
-                </button>
-                <button id="copyOlButton">OL</button>
-                <button id="copyBoldButton" class="tooltip">Negrito
-                    <span class="tooltiptext">Ctrl + X</span>
-                </button>
-                <button id="copyItalicButton" class="tooltip">Itálico</button>
-                <button id="copyH4Button" class="tooltip">H4
-                    <span class="tooltiptext">Ctrl + 4</span>
-                </button>
-                <button id="copyH5Button" class="tooltip">H5
-                    <span class="tooltiptext">Ctrl + 4</span>
-                </button>
-                <button id="copyImgButton">Imagem</button>
-                <button id="copyLoremButton">Lorem</button>
+        <div>
+            <h1>Converte Mais</h1>
+            
+            <!-- <label for="textInput">Conversão de texto</label><br> -->
+            <textarea id="textInput" rows="10" cols="50" placeholder="Use (p) para separar parágrafos, ** para negrito, * para itálico, (ul) para lista não ordenada, (ol) para lista ordenada"></textarea><br><br>
+            <div class="buttons">
+                <div>
+                    <button id="copyPButton" class="tooltip">Parágrafo
+                        <span class="tooltiptext">Ctrl + S</span>
+                    </button>
+                    <button id="copyUlButton" class="tooltip">UL
+                        <span class="tooltiptext">Ctrl + D</span>
+                    </button>
+                    <button id="copyOlButton">OL</button>
+                    <button id="copyBoldButton" class="tooltip">Negrito
+                        <span class="tooltiptext">Ctrl + X</span>
+                    </button>
+                    <button id="copyItalicButton" class="tooltip">Itálico</button>
+                    <button id="copyH4Button" class="tooltip">H4
+                        <span class="tooltiptext">Ctrl + 4</span>
+                    </button>
+                    <button id="copyH5Button" class="tooltip">H5
+                        <span class="tooltiptext">Ctrl + 4</span>
+                    </button>
+                    <button id="copyImgButton">Imagem</button>
+                    <button id="copyLoremButton">Lorem</button>
+                </div>
+                <button id="generateButton" onclick="generateText()">Gerar</button>
             </div>
-            <button id="generateButton" onclick="generateText()">Gerar</button>
+            <br><br>
+            <button id="copyTextButton">COPIAR TEXTO</button>
+            <button id="copyHtmlButton">COPIAR HTML</button>
+            <div class="textos">
+                <div class="textos__preview">
+                    <div id="htmlResultado"></div>
+                </div>
+                <div class="textos__plaintext" style="display: none;">
+                    <h3>Plain Text</h3>
+                    <pre class="textos__plaintext__gerado"></pre>
+                </div>
+                <div class="textos__html">
+                    <h3>HTML</h3>
+                    <pre class="textos__html__gerado"></pre>
+                </div>
+            </div>
         </div>
-        <br><br>
-        <button id="copyTextButton">COPIAR TEXTO</button>
-        <button id="copyHtmlButton">COPIAR HTML</button>
-        <div class="textos">
-            <div class="textos__preview">
-                <div id="htmlResultado"></div>
-            </div>
-            <div class="textos__plaintext" style="display: none;">
-                <h3>Plain Text</h3>
-                <pre class="textos__plaintext__gerado"></pre>
-            </div>
-            <div class="textos__html">
-                <h3>HTML</h3>
-                <pre class="textos__html__gerado"></pre>
-            </div>
-        </div>
+        <p class="author">Produzido por Moa Schneider • Versão 1.2</p>
     </div>
-</div>
 
 
     
