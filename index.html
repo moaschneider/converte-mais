@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferramenta Converter</title>
+    <title>Converte Mais 1.0</title>
     <!-- Libre Franklin -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <!-- https://www.cdnfonts.com/century-gothic-paneuropean.font -->
+    <!-- Century Gothic Paneuropean -->
     <link href="https://fonts.cdnfonts.com/css/century-gothic-paneuropean" rel="stylesheet">
     <!-- Roboto -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
@@ -18,10 +18,12 @@
             --botaoVoltar: crimson;
             --botaoTabela: darkorange;
         }
-
         * {
             box-sizing: border-box;
             font-family: 'Roboto', 'Libre Franklin', 'Century Gothic Paneuropean', sans-serif;
+        }
+        .b {
+            border: 1px solid red;
         }
         pre {
             white-space: pre-wrap; /* Para preservar espaços e quebras de linha */
@@ -43,18 +45,35 @@
             height: 300px;
             border-radius: 10px;
             padding: 10px;
-            font-size: 14px;
-        }
-        #textInputTable {
-            width: var(--largura);
-            height: 50px;
-            border-radius: 10px;
-            padding: 10px;
-            font-size: 14px;
+            font-size: 15px;
+            border: 1px solid black;
         }
         .buttons {
+            max-width: 100%;
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .buttons__functions {
+            max-width: 70%;
+            display: flex;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .buttons__functions button {
+            padding: 4px;
+            border-radius: 5px;
+            border: 0.5px solid black;
+        }
+        .buttons__functions__tags, .buttons__functions__copy {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .buttons__functions__tags button, .buttons__functions__copy button {
+            cursor: pointer;
         }
         #generateButton {
             font-size: 18px;
@@ -67,6 +86,12 @@
             background-color: var(--botaoGerar);
             border-color: var(--botaoGerar);
         }
+        #copyTextButton, #copyHtmlButton {
+            background-color: black;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
         .textos {
             margin: 30px 0 100px 0;
             width: 100%;
@@ -74,7 +99,7 @@
             flex-direction: column;
             gap: 15px;
         }
-        .textos__plaintext, .textos__html, .textos__preview {
+        .textos__html, .textos__preview {
             width: 100%;
             padding: 10px;
             display: flex;
@@ -82,19 +107,15 @@
             border: 1px solid black;
             border-radius: 10px;
         }
-        .textos__plaintext h3, .textos__html h3, .textos__preview h3 {
-            margin: 0;
-        }
-        #table-container {
-            margin: 50px 0;
-            display: none;
-        }
         table {
             border-collapse: collapse;
         }
         td, th {
             border: 1px solid black;
             padding: 5px;
+        }
+        img {
+            max-width: 100%;
         }
         .tooltip {
         position: relative;
@@ -133,64 +154,57 @@
         <div>
             <h1>Converte Mais</h1>
             
-            <!-- <label for="textInput">Conversão de texto</label><br> -->
             <textarea id="textInput" rows="10" cols="50" placeholder="Use (p) para separar parágrafos, ** para negrito, * para itálico, (ul) para lista não ordenada, (ol) para lista ordenada"></textarea><br><br>
             <div class="buttons">
-                <div>
-                    <button id="copyPButton" class="tooltip">Parágrafo
-                        <span class="tooltiptext">Ctrl + S</span>
-                    </button>
-                    <button id="copyUlButton" class="tooltip">UL
-                        <span class="tooltiptext">Ctrl + D</span>
-                    </button>
-                    <button id="copyOlButton">OL</button>
-                    <button id="copyBoldButton" class="tooltip">Negrito
-                        <span class="tooltiptext">Ctrl + X</span>
-                    </button>
-                    <button id="copyItalicButton" class="tooltip">Itálico</button>
-                    <button id="copyH4Button" class="tooltip">H4
-                        <span class="tooltiptext">Ctrl + 4</span>
-                    </button>
-                    <button id="copyH5Button" class="tooltip">H5
-                        <span class="tooltiptext">Ctrl + 4</span>
-                    </button>
-                    <button id="copyImgButton">Imagem</button>
-                    <button id="copyLoremButton">Lorem</button>
+                <div class="buttons__functions">
+                    <div class="buttons__functions__tags">
+                        <button id="copyPButton" class="tooltip">Parágrafo
+                            <span class="tooltiptext">Ctrl + S</span>
+                        </button>
+                        <button id="copyUlButton" class="tooltip">UL
+                            <span class="tooltiptext">Ctrl + D</span>
+                        </button>
+                        <button id="copyOlButton">OL</button>
+                        <button id="copyBoldButton" class="tooltip">Negrito
+                            <span class="tooltiptext">Ctrl + X</span>
+                        </button>
+                        <button id="copyItalicButton" class="tooltip">Itálico</button>
+                        <button id="copyH4Button" class="tooltip">H4
+                            <span class="tooltiptext">Ctrl + 4</span>
+                        </button>
+                        <button id="copyH5Button" class="tooltip">H5
+                            <span class="tooltiptext">Ctrl + 4</span>
+                        </button>
+                        <button id="copyImgButton" class="tooltip">Imagem
+                            <span class="tooltiptext">Ctrl + I</span>
+                        </button>
+                        <button id="copyLoremButton">Lorem</button>
+                    </div>
+                    <div class="buttons__functions__copy">
+                        <button id="copyTextButton">COPIAR TEXTO</button>
+                        <button id="copyHtmlButton">COPIAR HTML</button>
+                    </div>
                 </div>
                 <button id="generateButton" onclick="generateText()">Gerar</button>
             </div>
-            <br><br>
-            <button id="copyTextButton">COPIAR TEXTO</button>
-            <button id="copyHtmlButton">COPIAR HTML</button>
+            
+
             <div class="textos">
                 <div class="textos__preview">
                     <div id="htmlResultado"></div>
                 </div>
-                <div class="textos__plaintext" style="display: none;">
-                    <h3>Plain Text</h3>
-                    <pre class="textos__plaintext__gerado"></pre>
-                </div>
                 <div class="textos__html">
                     <h3>HTML</h3>
-                    <pre class="textos__html__gerado"></pre>
+                    <pre id="htmlCodigo" class="textos__html__gerado"></pre>
                 </div>
             </div>
         </div>
-        <p class="author">Produzido por Moa Schneider • Versão 1.2</p>
+        <p class="author">Desenvolvido por Moa Schneider • Versão 1.0</p>
     </div>
 
 
-    
-    
-    
-    
-
     <script>
-
-        function removeExcessiveSpaces(text) {
-            return text.replace(/\s{3,}/g, ' ').trim();
-        }
-
+        // ::: PROCESSA BOLD E ITÁLICO :::
         function convertMarkdownToHtml(text) {
             // Convert markdown for bold (**) and italic (* or _)
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Negrito com **
@@ -198,16 +212,20 @@
             return text;
         }
 
-        // Divs de plain text e HTML
-        const plainTextDiv = document.querySelector('.textos__plaintext__gerado');
-        const htmlDiv = document.querySelector('.textos__html__gerado');
+        // Nomes das divs onde entra o html código e o html resultante
+        const htmlCodigoDiv = document.getElementById('htmlCodigo');
         const htmlResultadoDiv = document.getElementById('htmlResultado');
 
-        function removerEspacos(text){
-            text = removeExcessiveSpaces(text.replace(/\n+/g, ' '));
-            return text;
+
+        // ::: REMOVE ESPAÇOS E QUEBRAS EXCESSIVAS
+        function removerEspacos(text) {
+            return text.replace(/\n+/g, ' ')    // Substitui quebras de linha por um espaço
+               .replace(/\s{3,}/g, ' ') // Remove espaços consecutivos (3 ou mais)
+               .trim();                 // Remove espaços no início e no final da string
         }
 
+
+        // ::: DIVIDE TEXTO EM PARÁGRAFOS :::
         function divideTextoEmParagrafos(text){
             return text
                 .split('(p)')
@@ -215,24 +233,23 @@
                 .filter(p => p.length > 0);
         }
 
-
-
         let htmlOutput = '';
-        let plainTextOutput = '';
         let htmlResultado = '';
 
+
+        // ::: RECEBE O TEXTO, REMOVE ESPAÇOS E QUEBRAS EXCESSIVAS E PROCESSA PARÁGRAFOS :::
         function generateText() {
 
             let textInput = document.getElementById('textInput').value;
 
             // Remove espaços excessivos e quebras de linha
-            textInput = removerEspacos(textInput);
+            // textInput = removerEspacos(textInput);
 
             // Divide o texto em parágrafos usando (p)
             const paragraphs = divideTextoEmParagrafos(textInput);
 
+            // Variáveis que recebem os diversos processamentos ao longo do script e que vão ser inseridas nas divs
             htmlOutput = '';
-            plainTextOutput = '';
             htmlResultado = '';
 
             processarParagrafos(paragraphs);
@@ -240,122 +257,88 @@
             // Mostra a div com os previews de texto e html
             document.querySelector('.textos').style.display = 'flex';
 
-
-            // Remove linhas vazias extras no plain text
-            plainTextOutput = plainTextOutput.trim();
-
-            plainTextDiv.textContent = plainTextOutput;
-            htmlDiv.textContent = htmlOutput;
+            htmlCodigoDiv.textContent = htmlOutput;
             htmlResultadoDiv.innerHTML = htmlOutput;
         }
 
 
-        // Atualiza a função processarParagrafos para usar a nova função
-        function processarParagrafos(paragraphs) {
-            paragraphs.forEach(paragraph => {
+        // ::: PROCESSA OS PARÁGRAFOS ::: 
+function processarParagrafos(paragraphs) {
+    paragraphs.forEach(paragraph => {
+
+        // Se for uma tag <pre>, pula a remoção de espaços
+        if (paragraph.startsWith('(pre)')) {
+            const preContent = paragraph.replace('(pre)', ''); // Remove (pre) sem remover espaços
+            
+             // Simula o <pre> usando div com white-space
+            htmlOutput += `<div style="white-space: pre-wrap;">${convertMarkdownToHtml(preContent)}</div>\n`;
+        } else {
+            // Para outros tipos de parágrafo, primeiro remove espaços e processa normalmente
+            paragraph = removerEspacos(paragraph);
+
             // Converte hashtags em títulos ou mantém como parágrafo
             const convertedText = convertHashtagsToHtml(paragraph);
-
 
             // Detecta uma tabela e processa
             if (paragraph.startsWith('(table)') && paragraph.endsWith('(table)')) {
 
-                // Remove os delimitadores (table) e obtém o conteúdo interno
                 const tableContent = paragraph.replace(/^\(table\)|\(table\)$/g, '').trim();
-                
-                // Gerar o HTML da tabela
                 const tableHtml = textToHtmlTable(tableContent);
 
-                // Adicionar ao HTML final
                 htmlOutput += tableHtml + '\n';
 
-                // Adicionar o texto original no plain text
-                // const tableContentChangingPipeByBreakLine = tableContent.replace(/\| /g, '\n');
-                const tableContentForPlainText = tableContent.replace(/\| /g, '\n');
-                const tableContentForPlainTextFinalContent =  `\nTABELA\n${tableContentForPlainText}\n\n`;
-                plainTextOutput += tableContentForPlainTextFinalContent;
-        } else {
+            } else if (paragraph.startsWith('(block)')) {
+                // Remove o marcador (block) sem remover espaços
+                const blockquoteContent = paragraph.replace('(block)', '').trim();
+                
+                // Envolve o conteúdo com a tag <blockquote>
+                htmlOutput += `<blockquote>${blockquoteContent}</blockquote>\n`;
 
-            // Verifica se o parágrafo é uma lista não ordenada
-            if (paragraph.startsWith('(ul)')) {
+            } else if (paragraph.startsWith('(ul)')) {
                 const listItems = paragraph.split('(ul)').map(item => item.trim()).filter(item => item.length > 0);
                 htmlOutput += '<ul>\n' + listItems.map(item => `<li>${convertMarkdownToHtml(item)}</li>`).join('\n') + '\n</ul>\n';
-                
-                // Adiciona a lista no plain text sem linhas extras
-                plainTextOutput += listItems.map(item => `• ${item}`).join('\n') + '\n';
-            } 
-            // Verifica se o parágrafo é uma lista ordenada
-            else if (paragraph.startsWith('(ol)')) {
+
+            } else if (paragraph.startsWith('(ol)')) {
                 const listItems = paragraph.split('(ol)').map(item => item.trim()).filter(item => item.length > 0);
                 htmlOutput += '<ol>\n' + listItems.map(item => `<li>${convertMarkdownToHtml(item)}</li>`).join('\n') + '\n</ol>\n';
-                
-                // Adiciona a lista no plain text sem linhas extras
-                listItems.forEach((item, index) => {
-                    plainTextOutput += `${index + 1}. ${item}\n`;
-                });
-            } 
-            // Verifica se o parágrafo é uma imagem com figura
-else if (paragraph.startsWith('(img)')) {
-    const imgContent = paragraph.replace('(img)', '').trim(); // Remove o (img) e ajusta o conteúdo
-    const [imgSrc, imgFigureNumber, imgFigureCaption, imgSource, imgDescription] = imgContent.split('|').map(item => item.trim()); // Separa URL, descrição, número da figura, e fonte
-    
-    // Constrói a estrutura de <figure> com <img> e os demais elementos
-    htmlOutput += `<figure>\n`;
-    
-    // Parágrafo com imagem centralizada
-    htmlOutput += `<p style="text-align: center;">\n`;
-    htmlOutput += `<img src="https://placehold.co/500x300/crimson/black?text=${imgSrc || ''}" alt="Descrição abaixo da imagem.">\n`;
-    htmlOutput += `</p>\n`;
 
-    // Parágrafo com número da figura e fonte
-    htmlOutput += `<p style="text-align: center;">\n`;
-    htmlOutput += `Figura ${imgFigureNumber || 'X'} - `;
-    htmlOutput += `${imgFigureCaption || '\n'}<br>\n`;
-    htmlOutput += `<sub>Fonte: ${imgSource || ''}</sub>\n`;
-    htmlOutput += `</p>\n`;
+            } else if (paragraph.startsWith('(img)')) {
+                // Processa figure e insere imagem de marcação
+                const imgContent = paragraph.replace('(img)', '').trim();
+                const [imgFigureNumber, imgFigureCaption, imgSource, imgDescription] = imgContent.split('|').map(item => item.trim());
 
-    // Parágrafo com a descrição da imagem
-    htmlOutput += `<p><sub>Descrição da imagem: ${imgDescription || ''}</sub></p>\n`;
+                htmlOutput += `<figure>\n`;
+                htmlOutput += `<p style="text-align: center;">\n<img src="https://placehold.co/500x300/crimson/black?text=${imgFigureCaption || ''}" alt="Descrição abaixo da imagem.">\n</p>\n`;
+                htmlOutput += `<p style="text-align: center;">Figura ${imgFigureNumber || 'X'} - ${imgFigureCaption || '\n'}<br><sub>Fonte: ${imgSource || ''}</sub>\n</p>\n`;
+                htmlOutput += `<p><sub>Descrição da imagem: ${imgDescription || ''}</sub></p>\n`;
+                htmlOutput += `</figure>\n`;
 
-    htmlOutput += `</figure>\n`;
-
-    // Adiciona a URL da imagem no plain text (apenas URL, ou com descrição opcional)
-    plainTextOutput += `Imagem: ${imgSrc}\n`;
-    if (imgDescription) {
-        plainTextOutput += `Descrição: ${imgDescription}\n`;
-    }
-    if (imgSource) {
-        plainTextOutput += `Fonte: ${imgSource}\n`;
-    }
-} else {
+            } else {
                 // Adiciona o texto convertido no HTML
                 htmlOutput += convertedText + '\n';
-    
-                // Adiciona o texto original no plain text (mantendo hashtags)
-                plainTextOutput += paragraph + '\n';
             }
-
         }
     });
 }
 
-       // Função para converter hashtags em títulos
-function convertHashtagsToHtml(text) {
-    // Regex para detectar títulos
-    const titleRegex = /^(#{1,6})\s*(.+?)\s*#{1,6}$/;
+        // ::: CONVERSÃO DE # EM TÍTULOS :::
+        function convertHashtagsToHtml(text) {
+            // Regex para detectar títulos
+            const titleRegex = /^(#{1,6})\s*(.+?)\s*#{1,6}$/;
 
-    // Se o texto corresponder ao padrão de título, retorna a tag de título
-    const match = text.match(titleRegex);
-    if (match) {
-        const level = match[1].length; // O número de hashtags define o nível do título
-        return `<h${level}>${match[2].trim()}</h${level}>`;
-    }
+            // Se o texto corresponder ao padrão de título, retorna a tag de título
+            const match = text.match(titleRegex);
+            if (match) {
+                const level = match[1].length; // O número de hashtags define o nível do título
+                return `<h${level}>${match[2].trim()}</h${level}>`;
+            }
 
-    // Se não for título, retorna o texto original
-    return `<p>${convertMarkdownToHtml(text)}</p>`;
-}
+            // Se não for título, retorna o texto original
+            return `<p>${convertMarkdownToHtml(text)}</p>`;
+        }
 
 
+        // ::: COPIAR PARA ÁREA DE TRANSFERÊNCIA :::
         function copyToClipboard(content) {
             const tempInput = document.createElement('textarea');
             tempInput.value = content;
@@ -365,13 +348,10 @@ function convertHashtagsToHtml(text) {
             document.body.removeChild(tempInput);
         }
 
-        // document.getElementById('copyTextButton').addEventListener('click', () => {
-        //     const textContent = document.querySelector('.textos__plaintext__gerado').textContent;
-        //     copyToClipboard(textContent);
-        // });
 
+        // ::: COPIA TAGS DOS BOTÕES :::
         document.getElementById('copyHtmlButton').addEventListener('click', () => {
-            const htmlContent = document.querySelector('.textos__html__gerado').textContent;
+            const htmlContent = document.querySelector('#htmlCodigo').textContent;
             copyToClipboard(htmlContent);
         });
 
@@ -412,7 +392,7 @@ function convertHashtagsToHtml(text) {
 
         // Add event listener for the new Image button
         document.getElementById('copyImgButton').addEventListener('click', () => {
-            copyToClipboard('(img)Imagem de marcação | Nº | LEGENDA DA IMAGEM | FONTE | DESCRIÇÃO DA IMAGEM');
+            copyToClipboard('(img) NºFOTO | LEGENDA | FONTE | DESCRIÇÃO');
         });
 
         // Add event listener for the new Lorem button
@@ -421,7 +401,7 @@ function convertHashtagsToHtml(text) {
         });
 
 
-        // Função para copiar o conteúdo visível de 'htmlResultados'
+        // ::: COPIAR CÓDIGOS, TEXTOS E TECLAS DE ATALHO :::
         function copiarConteudoVisivel() {
             const htmlDiv = document.getElementById("htmlResultado");
 
@@ -446,13 +426,6 @@ function convertHashtagsToHtml(text) {
         // Evento de clique no botão para copiar
         document.getElementById("copyTextButton").addEventListener("click", copiarConteudoVisivel);
 
-
-
-
-
-
-
-
         const textarea = document.getElementById('textInput');
 
         // Função para inserir o texto "(p)" na posição atual do cursor
@@ -472,7 +445,7 @@ function convertHashtagsToHtml(text) {
             textarea.focus();
         }
 
-        // Event listener para capturar Ctrl + Q
+        // Definições das teclas de atalho
         textarea.addEventListener('keydown', function(event) {
             if (event.ctrlKey && event.key.toLowerCase() === 's') {
                 event.preventDefault(); // Evita o comportamento padrão
@@ -499,18 +472,34 @@ function convertHashtagsToHtml(text) {
                 insertTextAtCursor(' ##### '); // Insere o texto " ##### "
             }
 
+            if (event.ctrlKey && event.key.toLowerCase() === 'i') {
+                event.preventDefault(); // Evita o comportamento padrão
+                insertTextAtCursor('(img) NºFOTO | LEGENDA | FONTE | DESCRIÇÃO'); // Insere imagem
+            }
         });
 
 
+        // ::: FUNÇÃO PARA SALVAR O TRABALHO NO LOCAL STORAGE :::
+        function salvarTexto() {
+            const text = textarea.value;
+            localStorage.setItem('textoSalvo', text);
+        }
+
+        // Carregar o texto salvo ao abrir a página
+        function carregarTexto() {
+            const textoSalvo = localStorage.getItem('textoSalvo');
+            if (textoSalvo) {
+                textarea.value = textoSalvo;
+            }
+        }
+
+        // Configurar o auto-salvamento a cada 5 segundos
+        setInterval(salvarTexto, 5000);
+
+        window.addEventListener('load', carregarTexto);
 
 
-
-
-
-
-
-
-        // CÓDIGO DO CONVERSOR DE TABELA
+        // ::: PROCESSA TABELA :::
         function parseCell(cell) {
             let rowspanMatch = cell.match(/\(rowspan=(\d+)\)/);
             let colspanMatch = cell.match(/\(colspan=(\d+)\)/);
@@ -579,39 +568,6 @@ function convertHashtagsToHtml(text) {
             html += "</table>";
             return html;
         }
-
-        function generateTable() {
-            const textInputToTable = document.getElementById('textInputTable').value;
-            const htmlTable = textToHtmlTable(textInputToTable);
-            const tableContainer = document.getElementById('table-container__html');
-            tableContainer.innerHTML = htmlTable;
-
-            document.getElementById('table-container').style.display = 'block';
-
-            // Mostrar os botões de copiar e adicionar
-            // document.getElementById('copyButton').style.display = 'block';
-            document.getElementById('addTableButton').style.display = 'block';
-        }
-
-        // // Função para adicionar a tabela gerada ao texto plain text e HTML
-        // function addTableToGenerated() {
-        //     const tableHtml = document.getElementById('table-container__html').innerHTML;
-        //     // const textInput = document.getElementById('textInputTable').value;
-            
-        //     // Adicionar tabela ao HTML gerado
-        //     htmlDiv.textContent += "\n" + tableHtml + "\n";
-
-        //     // Adicionar o texto original ao plain text gerado
-        //     plainTextDiv.textContent += "\n" + textInput + "\n";
-
-        //     // Limpar a área de tabela
-        //     document.getElementById('table-container').style.display = 'none';
-        //     document.getElementById('addTableButton').style.display = 'none';
-        // }
-
-        // // Adiciona o evento de clique ao botão "Adicionar"
-        // document.getElementById('addTableButton').addEventListener('click', addTableToGenerated);
-
 
     </script>
 
