@@ -281,6 +281,11 @@ function processarParagrafos(paragraphs) {
             // Converte hashtags em títulos ou mantém como parágrafo
             const convertedText = convertHashtagsToHtml(paragraph);
 
+            // Adiciona <p><br></p> antes de todos os títulos
+            if (convertedText.match(/^<h[1-6]>.*<\/h[1-6]>$/)) {
+                htmlOutput += '<p><br></p>\n';
+            }
+
             // Detecta uma tabela e processa
             if (paragraph.startsWith('(table)') && paragraph.endsWith('(table)')) {
 
@@ -314,6 +319,8 @@ function processarParagrafos(paragraphs) {
                 htmlOutput += `<p style="text-align: center;">Figura ${imgFigureNumber || 'X'} - ${imgFigureCaption || '\n'}<br><sub>Fonte: ${imgSource || ''}</sub>\n</p>\n`;
                 htmlOutput += `<p><sub>Descrição da imagem: ${imgDescription || ''}</sub></p>\n`;
                 htmlOutput += `</figure>\n`;
+                htmlOutput += `<p><br></p>\n`;
+
 
             } else {
                 // Adiciona o texto convertido no HTML
