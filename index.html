@@ -301,6 +301,13 @@ function processarParagrafos(paragraphs) {
                 // Envolve o conteúdo com a tag <blockquote>
                 htmlOutput += `<blockquote>${blockquoteContent}</blockquote>\n`;
 
+            } else if (paragraph.startsWith('(linha)')) {
+                // Remove o marcador (linha) sem remover espaços
+                const hrContent = paragraph.replace('(linha)', '').trim();
+                
+                // Insere a tag <hr>
+                htmlOutput += `<hr>\n`;
+
             } else if (paragraph.startsWith('(ul)')) {
                 const listItems = paragraph.split('(ul)').map(item => item.trim()).filter(item => item.length > 0);
                 htmlOutput += '<ul>\n' + listItems.map(item => `<li>${convertMarkdownToHtml(item)}</li>`).join('\n') + '\n</ul>\n';
