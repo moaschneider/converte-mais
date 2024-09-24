@@ -28,6 +28,14 @@
         pre {
             white-space: pre-wrap; /* Para preservar espaços e quebras de linha */
         }
+        code {
+            font-family: monospace;
+            display: inline-block;
+            padding: 15px;
+            margin: 0 0 0 30px;
+            background-color: lightblue;
+            border-radius: 0px;
+        }
         .margin {
             margin: 0 auto;
             width: var(--largura);
@@ -307,6 +315,13 @@
                 // Envolve o conteúdo com a tag <blockquote>
                 htmlOutput += `<blockquote>${blockquoteContent}</blockquote>\n`;
 
+            } else if (paragraph.startsWith('(code)')) {
+                // Remove o marcador (code) sem remover espaços
+                const blockquoteContent = paragraph.replace('(code)', '').trim();
+                
+                // Envolve o conteúdo com a tag <code>
+                htmlOutput += `<code>${blockquoteContent}</code><br>\n`;
+
             } else if (paragraph.startsWith('(linha)')) {
                 // Remove o marcador (linha) sem remover espaços
                 const hrContent = paragraph.replace('(linha)', '').trim();
@@ -427,7 +442,7 @@
 
         // Add event listener for the new Table button
         document.getElementById('copyTableButton').addEventListener('click', () => {
-            copyToClipboard('(table)\n(th)Ponto e vírgula separa células;(th)Use o pipe para nova linha;(th)Para mesclar na vertical use (rowspan=2)|\n:Para mesclar na horizontal use (colspan=2)|\n:Dois pontos centraliza;:Pode usar **negrito** e *itálico*(colspan=2)\n(table)');
+            copyToClipboard('(table)\nCÉLULA ; CÉLULA ; CÉLULA |\nCÉLULA ; CÉLULA ; CÉLULA \n(table)\n\n');
         });
 
         // Event Listener para o botão Exemplo
@@ -491,6 +506,16 @@
                 event.preventDefault(); // Evita o comportamento padrão
                 insertTextAtCursor('(ul)'); // Insere o texto "(ul)"
             }
+            
+            if (event.altKey && event.key.toLowerCase() === 'e') {
+                event.preventDefault(); // Evita o comportamento padrão
+                insertTextAtCursor('(ol)'); // Insere o texto "(ol)"
+            }
+            
+            if (event.altKey && event.key.toLowerCase() === 'c') {
+                event.preventDefault(); // Evita o comportamento padrão
+                insertTextAtCursor('(code)'); // Insere o texto "(code)"
+            }
 
             if (event.altKey && event.key.toLowerCase() === 'x') {
                 // event.preventDefault(); // Evita o comportamento padrão
@@ -534,7 +559,7 @@
 
             if (event.altKey && event.key.toLowerCase() === 'b') {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(table)\n(th)Ponto e vírgula separa células;(th)Use o pipe para nova linha;(th)Para mesclar na vertical use (rowspan=2)|\n:Para mesclar na horizontal use (colspan=2)|\n:Dois pontos centraliza;:Pode usar **negrito** e *itálico*(colspan=2)\n(table)');
+                insertTextAtCursor('(table)\nCÉLULA ; CÉLULA ; CÉLULA |\nCÉLULA ; CÉLULA ; CÉLULA \n(table)\n\n');
             }
 
             if (event.altKey && event.key.toLowerCase() === '0') {
