@@ -232,20 +232,23 @@
 
         // Destacar palavras e letras "proibidas"
         const palavrasProibidas = ['alunos', 'aluno', 'aluna', 'alunas', '\\?'];
-        const unidadesMedida = ['ºC', 'kg', 'm', 'km', 'L', 'ml', 'mm'];
+        const unidadesMedida = ['ºC', 'kg', 'mm', 'km', 'L', 'ml', 'm'];
 
 
         function destacarPalavras(texto) {
             palavrasProibidas.forEach(palavra => {
                 // Tratar o ponto de interrogação separadamente
                 if (palavra === '\\?') {
-                    texto = texto.replace(/\?/g, '<span style="color: red; font-weight: bold;">?</span>');
+                    texto = texto.replace(/([\p{L}\w]+)\?/gu, '<span style="color: red; font-weight: bold;">$1?</span>');
                 } else {
                     // Regex com bordas de palavras para outras palavras proibidas
                     const regex = new RegExp(`\\b(${palavra})\\b`, 'gi');
                     texto = texto.replace(regex, '<span style="color: red; font-weight: bold;">$1</span>');
                 }
             });
+
+            // Remove as barras invertidas que escapam os pontos de interrogação
+            texto = texto.replace(/\\\?/g, '?');
 
             // Destacar números sem espaço antes das unidades de medida
             unidadesMedida.forEach(unidade => {
@@ -537,10 +540,15 @@
 
         // Definições das teclas de atalho
         textarea.addEventListener('keydown', function(event) {
-            if (event.altKey && event.key.toLowerCase() === 's') {
+            
+            if (event.altKey && event.ctrlKey && event.key.toLowerCase() === 's') {
+                // event.preventDefault(); // Evita o comportamento padrão
+                insertTextAtCursor('(p)\n'); // Insere o texto "(p)"
+            } else if (event.altKey && event.key.toLowerCase() === 's') {
                 // event.preventDefault(); // Evita o comportamento padrão
                 insertTextAtCursor('(p)'); // Insere o texto "(p)"
             }
+            
             
             if (event.altKey && event.key.toLowerCase() === 'd') {
                 event.preventDefault(); // Evita o comportamento padrão
