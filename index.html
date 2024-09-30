@@ -189,8 +189,8 @@
                         <button id="copyTableButton" class="tooltip">Tabela
                             <span class="tooltiptext">Alt + B</span>
                         </button>
-                        <button id="copyExampleButton" class="tooltip">Exemplos
-                            <span class="tooltiptext">Alt + 0</span>
+                        <button id="copyBlockquoteButton" class="tooltip">Blockquote
+                            <span class="tooltiptext">Alt + K</span>
                         </button>
                     </div>
                     <div class="buttons__functions__copy">
@@ -223,10 +223,39 @@
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Negrito com **
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Itálico com *
 
-            text = text.replace(/\(br\)/g, '<br>\n');
+            text = text.replace(/\(br\)/g, '<br>');
+
+            text = destacarPalavras(text);
 
             return text;
         }
+
+        // Destacar palavras e letras "proibidas"
+        const palavrasProibidas = ['alunos', 'aluno', 'aluna', 'alunas', '\\?'];
+        const unidadesMedida = ['ºC', 'kg', 'm', 'km', 'L', 'ml', 'mm'];
+
+
+        function destacarPalavras(texto) {
+            palavrasProibidas.forEach(palavra => {
+                // Tratar o ponto de interrogação separadamente
+                if (palavra === '\\?') {
+                    texto = texto.replace(/\?/g, '<span style="color: red; font-weight: bold;">?</span>');
+                } else {
+                    // Regex com bordas de palavras para outras palavras proibidas
+                    const regex = new RegExp(`\\b(${palavra})\\b`, 'gi');
+                    texto = texto.replace(regex, '<span style="color: red; font-weight: bold;">$1</span>');
+                }
+            });
+
+            // Destacar números sem espaço antes das unidades de medida
+            unidadesMedida.forEach(unidade => {
+                const regex = new RegExp(`(\\d+)(${unidade})`, 'g'); // detecta números seguidos diretamente pela unidade
+                texto = texto.replace(regex, '<span style="color: red; font-weight: bold;">$1$2</span>');
+            });
+            return texto;    
+        }
+
+
 
         // Nomes das divs onde entra o html código e o html resultante
         const htmlCodigoDiv = document.getElementById('htmlCodigo');
@@ -287,7 +316,10 @@
             const preContent = paragraph.replace('(pre)', ''); // Remove (pre) sem remover espaços
             
              // Simula o <pre> usando div com white-space
-            htmlOutput += `<div style="white-space: pre-wrap;">${convertMarkdownToHtml(preContent)}</div>\n`;
+            htmlOutput += `<div style="white-space: pre-wrap;">${convertMarkdownToHtml(preContent)}</div>\n\n`;
+
+
+
         } else {
             // Para outros tipos de parágrafo, primeiro remove espaços e processa normalmente
             paragraph = removerEspacos(paragraph);
@@ -297,23 +329,31 @@
 
             // Adiciona <p><br></p> antes de todos os títulos
             if (convertedText.match(/^<h[1-6]>.*<\/h[1-6]>$/)) {
-                htmlOutput += '<p><br></p>\n';
-            }
-
+                htmlOutput += '<p><br></p>\n\n';
+            }            
+            
             // Detecta uma tabela e processa
             if (paragraph.startsWith('(table)') && paragraph.endsWith('(table)')) {
-
+                
                 const tableContent = paragraph.replace(/^\(table\)|\(table\)$/g, '').trim();
                 const tableHtml = textToHtmlTable(tableContent);
-
-                htmlOutput += tableHtml + '\n';
+                
+                htmlOutput += tableHtml + '\n\n';
+                
 
             } else if (paragraph.startsWith('(block)')) {
                 // Remove o marcador (block) sem remover espaços
                 const blockquoteContent = paragraph.replace('(block)', '').trim();
                 
                 // Envolve o conteúdo com a tag <blockquote>
-                htmlOutput += `<blockquote>${blockquoteContent}</blockquote>\n`;
+                htmlOutput += `<blockquote>${blockquoteContent}\n\n`;
+
+            } else if (paragraph.startsWith('(/block)')) {
+                // Remove o marcador (/block) sem remover espaços
+                const blockquoteContent = paragraph.replace('(/block)', '').trim();
+                
+                // Envolve o conteúdo com a tag <blockquote>
+                htmlOutput += `${blockquoteContent}</blockquote>\n\n`;
 
             } else if (paragraph.startsWith('(code)')) {
                 // Remove o marcador (code) sem remover espaços
@@ -331,11 +371,11 @@
 
             } else if (paragraph.startsWith('(ul)')) {
                 const listItems = paragraph.split('(ul)').map(item => item.trim()).filter(item => item.length > 0);
-                htmlOutput += '<ul>\n' + listItems.map(item => `<li>${convertMarkdownToHtml(item)}</li>`).join('\n') + '\n</ul>\n';
+                htmlOutput += '<ul>\n' + listItems.map(item => `<li>${convertMarkdownToHtml(item)}</li>`).join('\n') + '\n</ul>\n\n';
 
             } else if (paragraph.startsWith('(ol)')) {
                 const listItems = paragraph.split('(ol)').map(item => item.trim()).filter(item => item.length > 0);
-                htmlOutput += '<ol>\n' + listItems.map(item => `<li>${convertMarkdownToHtml(item)}</li>`).join('\n') + '\n</ol>\n';
+                htmlOutput += '<ol>\n' + listItems.map(item => `<li>${convertMarkdownToHtml(item)}</li>`).join('\n') + '\n</ol>\n\n';
 
             } else if (paragraph.startsWith('(img)')) {
                 // Processa figure e insere imagem de marcação
@@ -343,16 +383,16 @@
                 const [imgFigureNumber, imgFigureCaption, imgSource, imgDescription] = imgContent.split('|').map(item => item.trim());
 
                 htmlOutput += `<figure>\n`;
-                htmlOutput += `<p style="text-align: center;">\n<img src="https://placehold.co/500x300/crimson/black?text=${imgFigureCaption || ''}" alt="Descrição abaixo da imagem.">\n</p>\n`;
-                htmlOutput += `<p style="text-align: center;">Figura ${imgFigureNumber || 'X'} - ${imgFigureCaption || '\n'}<br><sub>Fonte: ${imgSource || ''}</sub>\n</p>\n`;
-                htmlOutput += `<p><sub>Descrição da imagem: ${imgDescription || ''}</sub></p>\n`;
-                htmlOutput += `</figure>\n`;
-                htmlOutput += `<p><br></p>\n`;
+                htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="https://placehold.co/500x300/crimson/black?text=${imgFigureCaption || ''}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
+                htmlOutput += `\t<p style="text-align: center;">Figura ${imgFigureNumber || 'X'} - ${imgFigureCaption || '\n'}<br>\n\t\t<sub>Fonte: ${imgSource || ''}</sub>\n\t</p>\n`;
+                htmlOutput += `\t<p>\n\t\t<sub>Descrição da imagem: ${imgDescription || ''}</sub>\n\t</p>\n`;
+                htmlOutput += `</figure>\n\n`;
+                htmlOutput += `<p><br></p>\n\n`;
 
 
             } else {
                 // Adiciona o texto convertido no HTML
-                htmlOutput += convertedText + '\n';
+                htmlOutput += convertedText + '\n\n';
             }
         }
     });
@@ -446,8 +486,8 @@
         });
 
         // Event Listener para o botão Exemplo
-        document.getElementById('copyExampleButton').addEventListener('click', () => {
-            copyToClipboard('Exemplo de texto');
+        document.getElementById('copyBlockquoteButton').addEventListener('click', () => {
+            copyToClipboard('(block)\n\nCOLOQUE O TEXTO DENTRO DESSES DOIS MARCADORES SEMPRE TERMINANDO COM UM MARCADOR DE PARÁGRAFO (p)\n\n(/block)\n\n');
         });
 
 
@@ -562,9 +602,9 @@
                 insertTextAtCursor('(table)\nCÉLULA ; CÉLULA ; CÉLULA |\nCÉLULA ; CÉLULA ; CÉLULA \n(table)\n\n');
             }
 
-            if (event.altKey && event.key.toLowerCase() === '0') {
+            if (event.altKey && event.key.toLowerCase() === 'k') {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('Exemplo de texto');
+                insertTextAtCursor('(block)\n\nCOLOQUE O TEXTO DENTRO DESSES DOIS MARCADORES SEMPRE TERMINANDO COM UM MARCADOR DE PARÁGRAFO (p)\n\n(/block)\n\n');
             }
         });
 
@@ -664,7 +704,7 @@
                 html += "  </tr>\n";
             });
 
-            html += "</table>\n";
+            html += "</table>\n\n";
             html += "<p><br></p>";
 
             return html;
