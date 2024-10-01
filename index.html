@@ -20,7 +20,30 @@
         }
         * {
             box-sizing: border-box;
-            font-family: 'Roboto', 'Libre Franklin', 'Century Gothic Paneuropean', sans-serif;
+            font-family: 'Century Gothic Paneuropean', 'Roboto', 'Libre Franklin', sans-serif;
+            font-size: 15px;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 500;
+            color: #32ab53;
+        }
+        h1 {
+            font-size: 27px;
+        }
+        h2 {
+            font-size: 23px;
+        }
+        h3 {
+            font-size: 21px;
+        }
+        h4 {
+            font-size: 19px;
+        }
+        h5 {
+            font-size: 17px;
+        }
+        h6 {
+            font-size: 15px;
         }
         .b {
             border: 1px solid red;
@@ -363,13 +386,14 @@
                         const [imgFigureNumber, imgFigureCaption, imgSource, imgDescription] = imgContent.split('|').map(item => item.trim());
 
                         htmlOutput += `<figure>\n`;
-                        htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="https://placehold.co/500x300/crimson/black?text=${imgFigureCaption || ''}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
+                        htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="https://placehold.co/500x300/32ab53/black?text=${imgFigureCaption || ''}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
                         htmlOutput += `\t<p style="text-align: center;">Figura ${imgFigureNumber || 'X'} - ${imgFigureCaption || '\n'}<br>\n\t\t<sub>Fonte: ${imgSource || ''}</sub>\n\t</p>\n`;
                         htmlOutput += `\t<p>\n\t\t<sub>Descrição da imagem: ${imgDescription || ''}</sub>\n\t</p>\n`;
                         htmlOutput += `</figure>\n\n`;
                         htmlOutput += `<p><br></p>\n\n`;
 
                     } else {
+
                         // Adiciona o texto convertido no HTML
                         htmlOutput += convertedText + '\n\n';
                     }
