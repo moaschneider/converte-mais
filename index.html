@@ -141,6 +141,9 @@
         table {
             border-collapse: collapse;
         }
+        th {
+            text-align: left;
+        }
         td, th {
             border: 1px solid black;
             padding: 5px;
@@ -477,7 +480,7 @@
 
         // Add event listener for the new Table button
         document.getElementById('copyTableButton').addEventListener('click', () => {
-            copyToClipboard('(table)\nCÉLULA ; CÉLULA ; CÉLULA |\nCÉLULA ; CÉLULA ; CÉLULA \n(table)\n\n');
+            copyToClipboard('(p) (table)\nCÉLULA ; CÉLULA ; CÉLULA |\nCÉLULA ; CÉLULA ; CÉLULA \n(table) (p)\n');
         });
 
         // Event Listener para o botão Exemplo
@@ -599,7 +602,7 @@
 
             if (event.altKey && event.key.toLowerCase() === 'b') {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(table)\nCÉLULA ; CÉLULA ; CÉLULA |\nCÉLULA ; CÉLULA ; CÉLULA \n(table)\n\n');
+                insertTextAtCursor('(p) (table)\nCÉLULA ; CÉLULA ; CÉLULA |\nCÉLULA ; CÉLULA ; CÉLULA \n(table) (p)\n');
             }
 
             if (event.altKey && event.key.toLowerCase() === 'k') {
