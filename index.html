@@ -366,7 +366,7 @@
                         const blockquoteContent = paragraph.replace('(code)', '').trim();
                         
                         // Envolve o conteúdo com a tag <code>
-                        htmlOutput += `<code>${blockquoteContent}</code><br>\n`;
+                        htmlOutput += `<code>${blockquoteContent}</code><br>\n\n`;
 
                     } else if (paragraph.startsWith('(linha)')) {
                         // Remove o marcador (linha) sem remover espaços
