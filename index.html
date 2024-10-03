@@ -381,15 +381,15 @@
                         const hrContent = paragraph.replace('(linha)', '').trim();
                         
                         // Insere a tag <hr>
-                        htmlOutput += `<hr>\n`;
+                        htmlOutput += `<hr>\n\n`;
 
                     } else if (paragraph.startsWith('(ul)')) {
                         const listItems = paragraph.split('(ul)').map(item => item.trim()).filter(item => item.length > 0);
-                        htmlOutput += '<ul>\n' + listItems.map(item => `<li>${convertMarkdownToHtml(item)}</li>`).join('\n') + '\n</ul>\n\n';
+                        htmlOutput += '<ul>\n' + listItems.map(item => `\t<li>${convertMarkdownToHtml(item)}</li>`).join('\n') + '\n</ul>\n\n';
 
                     } else if (paragraph.startsWith('(ol)')) {
                         const listItems = paragraph.split('(ol)').map(item => item.trim()).filter(item => item.length > 0);
-                        htmlOutput += '<ol>\n' + listItems.map(item => `<li>${convertMarkdownToHtml(item)}</li>`).join('\n') + '\n</ol>\n\n';
+                        htmlOutput += '<ol>\n' + listItems.map(item => `\t<li>${convertMarkdownToHtml(item)}</li>`).join('\n') + '\n</ol>\n\n';
 
                     } else if (paragraph.startsWith('(img)')) {
                         // Processa figure e insere imagem de marcação
@@ -574,6 +574,16 @@
                 event.preventDefault(); // Evita o comportamento padrão
                 insertTextAtCursor('(code)'); // Insere o texto "(code)"
             }
+            
+            if (event.altKey && event.key.toLowerCase() === 'q') {
+                event.preventDefault(); // Evita o comportamento padrão
+                insertTextAtCursor('(br)'); // Insere o texto "(br)"
+            }
+            
+            if (event.altKey && event.key.toLowerCase() === 'l') {
+                event.preventDefault(); // Evita o comportamento padrão
+                insertTextAtCursor('(linha)'); // Insere o texto "(linha)"
+            }
 
             if (event.altKey && event.key.toLowerCase() === 'x') {
                 // event.preventDefault(); // Evita o comportamento padrão
@@ -626,8 +636,8 @@
                 let selectedText = textarea.value.substring(start, end);
                 
                 // Adiciona os marcadores (p)(table) antes e depois da seleção
-                let before = '\n(p)(table)\n';
-                let after = '\n(table)(p)\n';
+                let before = '\n(p)(table)\n\n';
+                let after = '\n\n(table)(p)\n';
                 let newText = before + selectedText + after;
                 
                 // Atualiza o conteúdo do textarea com os marcadores
@@ -645,8 +655,8 @@
                 let selectedText = textarea.value.substring(start, end);
                 
                 // Adiciona os marcadores (p)(table) antes e depois da seleção
-                let before = '\n(block)(p)\n';
-                let after = '\n(p)(/block)\n';
+                let before = '\n(p)(block)(p)\n\n';
+                let after = '\n\n(p)(/block)(p)\n';
                 let newText = before + selectedText + after;
                 
                 // Atualiza o conteúdo do textarea com os marcadores
@@ -763,6 +773,6 @@
         }
 
     </script>
-
+<!-- versão 1.0 -->
 </body>
 </html>
