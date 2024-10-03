@@ -301,14 +301,20 @@
             
 
             let textInput = document.getElementById('textInput').value;
+
+            textInput = textInput
+                .replace(/\n+/g, ' ') // Remove quebras de linha
+                .replace(/\s{3,}/g, ' ') // Remove espaços excessivos
+                .trim(); // Remove espaços no início e no final
             
             // Divide o texto em parágrafos usando (p)
             const paragraphs = textInput.split('(p)').map(p => p.trim()).filter(p => p.length > 0);
 
+            
             // Variáveis que recebem os diversos processamentos ao longo do script e que vão ser inseridas nas divs
             htmlOutput = '';
             htmlResultado = '';
-
+            
             processarParagrafos(paragraphs);
 
             // Mostra a div com os previews de texto e html
