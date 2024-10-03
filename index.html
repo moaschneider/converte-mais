@@ -298,6 +298,7 @@
 
         // ::: 1 - RECEBE O TEXTO, REMOVE ESPAÇOS E QUEBRAS EXCESSIVAS E PROCESSA PARÁGRAFOS :::
         function generateText() {
+            
 
             let textInput = document.getElementById('textInput').value;
             
@@ -320,6 +321,7 @@
 
         // ::: 2 - PROCESSA OS PARÁGRAFOS ::: 
         function processarParagrafos(paragraphs) {
+            let photoNumber = 1;
             paragraphs.forEach(paragraph => {
 
             // Se for uma tag <pre>, pula a remoção de espaços
@@ -386,12 +388,19 @@
                     } else if (paragraph.startsWith('(img)')) {
                         // Processa figure e insere imagem de marcação
                         const imgContent = paragraph.replace('(img)', '').trim();
-                        const [imgFigureNumber, imgFigureCaption, imgSource, imgDescription] = imgContent.split('|').map(item => item.trim());
+
+                        const autoFigureNumber = photoNumber++;
+
+                        const [imgFigureCaption, imgSource, imgDescription] = imgContent.split('|').map(item => item.trim());
+
+                        // Palavras proibidas em legenda e descrição de fotos
+                        const imgFigureCaptionDestacado = destacarPalavras(imgFigureCaption);
+                        const imgDescriptionDestacado = destacarPalavras(imgDescription);
 
                         htmlOutput += `<figure>\n`;
                         htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="https://placehold.co/500x300/32ab53/black?text=${imgFigureCaption || ''}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
-                        htmlOutput += `\t<p style="text-align: center;">Figura ${imgFigureNumber || 'X'} - ${imgFigureCaption || '\n'}<br>\n\t\t<sub>Fonte: ${imgSource || ''}</sub>\n\t</p>\n`;
-                        htmlOutput += `\t<p>\n\t\t<sub>Descrição da imagem: ${imgDescription || ''}</sub>\n\t</p>\n`;
+                        htmlOutput += `\t<p style="text-align: center;">Figura ${autoFigureNumber} - ${imgFigureCaptionDestacado || '\n'}<br>\n\t\t<sub>Fonte: ${imgSource || ''}</sub>\n\t</p>\n`;
+                        htmlOutput += `\t<p>\n\t\t<sub>Descrição da imagem: ${imgDescriptionDestacado || ''}</sub>\n\t</p>\n`;
                         htmlOutput += `</figure>\n\n`;
                         htmlOutput += `<p><br></p>\n\n`;
 
@@ -475,7 +484,7 @@
 
         // Add event listener for the new Image button
         document.getElementById('copyImgButton').addEventListener('click', () => {
-            copyToClipboard('(p) (img) NºFOTO | LEGENDA | FONTE | DESCRIÇÃO (p)');
+            copyToClipboard('\n(p) (img) LEGENDA | FONTE | DESCRIÇÃO (p)\n');
         });
 
         // Add event listener for the new Table button
@@ -597,7 +606,7 @@
 
             if (event.altKey && event.key.toLowerCase() === 'i') {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(p) (img) NºFOTO | LEGENDA | FONTE | DESCRIÇÃO (p)'); // Insere imagem
+                insertTextAtCursor('\n(p) (img) LEGENDA | FONTE | DESCRIÇÃO (p)\n'); // Insere imagem
             }
 
             if (event.altKey && event.key === 'b') {
