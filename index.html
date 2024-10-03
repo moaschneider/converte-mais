@@ -352,7 +352,7 @@
                         const blockquoteContent = paragraph.replace('(block)', '').trim();
                         
                         // Envolve o conteúdo com a tag <blockquote>
-                        htmlOutput += `<blockquote>\n${blockquoteContent}`;
+                        htmlOutput += `<blockquote>\n\n${blockquoteContent}`;
 
                     } else if (paragraph.startsWith('(/block)')) {
                         // Remove o marcador (/block) sem remover espaços
@@ -480,12 +480,12 @@
 
         // Add event listener for the new Table button
         document.getElementById('copyTableButton').addEventListener('click', () => {
-            copyToClipboard('(p) (table)\nCÉLULA ; CÉLULA ; CÉLULA |\nCÉLULA ; CÉLULA ; CÉLULA \n(table) (p)\n');
+            copyToClipboard('(p)(table)\n\n(table)(p)\n');
         });
 
         // Event Listener para o botão Exemplo
         document.getElementById('copyBlockquoteButton').addEventListener('click', () => {
-            copyToClipboard('(block)\n\nCOLOQUE O TEXTO DENTRO DESSES DOIS MARCADORES SEMPRE TERMINANDO COM UM MARCADOR DE PARÁGRAFO (p)\n\n(/block)\n\n');
+            copyToClipboard('(block)(p)\n\n(p)(/block)\n\n');
         });
 
 
@@ -600,15 +600,43 @@
                 insertTextAtCursor('(p) (img) NºFOTO | LEGENDA | FONTE | DESCRIÇÃO (p)'); // Insere imagem
             }
 
-            if (event.altKey && event.key.toLowerCase() === 'b') {
-                // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(p) (table)\nCÉLULA ; CÉLULA ; CÉLULA |\nCÉLULA ; CÉLULA ; CÉLULA \n(table) (p)\n');
+            if (event.altKey && event.key === 'b') {
+                event.preventDefault(); // Evita o comportamento padrão
+                
+                // Pega a posição de início e fim da seleção de texto
+                let start = textarea.selectionStart;
+                let end = textarea.selectionEnd;
+                
+                // O texto selecionado
+                let selectedText = textarea.value.substring(start, end);
+                
+                // Adiciona os marcadores (p)(table) antes e depois da seleção
+                let before = '\n(p)(table)\n';
+                let after = '\n(table)(p)\n';
+                let newText = before + selectedText + after;
+                
+                // Atualiza o conteúdo do textarea com os marcadores
+                textarea.setRangeText(newText, start, end, 'end');
             }
 
-            if (event.altKey && event.key.toLowerCase() === 'k') {
-                // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(block)\n\nCOLOQUE O TEXTO DENTRO DESSES DOIS MARCADORES SEMPRE TERMINANDO COM UM MARCADOR DE PARÁGRAFO (p)\n\n(/block)\n\n');
-            }
+            if (event.altKey && event.key === 'k') {
+                event.preventDefault(); // Evita o comportamento padrão
+                
+                // Pega a posição de início e fim da seleção de texto
+                let start = textarea.selectionStart;
+                let end = textarea.selectionEnd;
+                
+                // O texto selecionado
+                let selectedText = textarea.value.substring(start, end);
+                
+                // Adiciona os marcadores (p)(table) antes e depois da seleção
+                let before = '\n(block)(p)\n';
+                let after = '\n(p)(/block)\n';
+                let newText = before + selectedText + after;
+                
+                // Atualiza o conteúdo do textarea com os marcadores
+                textarea.setRangeText(newText, start, end, 'end');
+            }            
         });
 
 
@@ -656,7 +684,10 @@
             return { cell, rowspan, colspan, alignCenter, isHeader };
         }
 
-        function textToHtmlTable(text, columnSeparator = ";", rowSeparator = "|") {
+        function textToHtmlTable(text, columnSeparator = ";", rowSeparator = ";;") {
+            // Substitui "\;" por valores temporários que não interferem na separação
+            text = text.replace(/\\;/g, "__ESCAPED_SEMICOLON__");
+
             const rows = text.split(rowSeparator).map(row => row.trim());
             let html = "<table border='1' align='center'>\n";
             let table = [];
@@ -709,6 +740,9 @@
 
             html += "</table>\n\n";
             html += "<p><br></p>";
+
+            // Reverte os valores temporários para ";"
+            html = html.replace(/__ESCAPED_SEMICOLON__/g, ";");
 
             return html;
         }
