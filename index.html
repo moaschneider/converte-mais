@@ -180,6 +180,9 @@
         visibility: visible;
         opacity: 1;
         }
+        span {
+            font-size: inherit;
+        }
     </style>
 </head>
 <body>
@@ -368,7 +371,7 @@
                         
                         // Envolve o conteúdo com a tag <blockquote>
                         htmlOutput += `${blockquoteContent}</blockquote>\n\n`;
-
+                    
                     } else if (paragraph.startsWith('(code)')) {
                         // Remove o marcador (code) sem remover espaços
                         const blockquoteContent = paragraph.replace('(code)', '').trim();
@@ -423,12 +426,15 @@
         function convertHashtagsToHtml(text) {
             // Regex para detectar títulos
             const titleRegex = /^(#{1,6})\s*(.+?)\s*#{1,6}$/;
+
             
             // Se o texto corresponder ao padrão de título, retorna a tag de título
             const match = text.match(titleRegex);
             if (match) {
                 const level = match[1].length; // O número de hashtags define o nível do título
-                return `<p><br></p>\n\n<h${level}>${match[2].trim()}</h${level}>`;
+                const tituloPalavrasProibidas = destacarPalavras(match[2]);
+
+                return `<p><br></p>\n\n<h${level}>${tituloPalavrasProibidas.trim()}</h${level}>`;
             }
 
             // Se não for título, retorna o texto original
@@ -583,6 +589,16 @@
             if (event.altKey && event.key.toLowerCase() === 'l') {
                 event.preventDefault(); // Evita o comportamento padrão
                 insertTextAtCursor('(linha)'); // Insere o texto "(linha)"
+            }
+            
+            if (event.altKey && event.key.toLowerCase() === 'h') {
+                event.preventDefault(); // Evita o comportamento padrão
+                insertTextAtCursor('(th)'); // Insere o texto "(th)"
+            }
+            
+            if (event.altKey && event.key.toLowerCase() === 'j') {
+                event.preventDefault(); // Evita o comportamento padrão
+                insertTextAtCursor('(th):'); // Insere o texto "(th):"
             }
 
             if (event.altKey && event.key.toLowerCase() === 'x') {
