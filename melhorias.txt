@@ -1,0 +1,329 @@
+MELHORIAS CONVERTE MAIS
+
+- Colocar âncoras que levam de volta pra cima quando vier conferir alguma coisa no htmlResultado
+- Clicar no botão e aparecer no lugar do prompt
+- Bug: <pre> (ver comentário "// ESCAPAR O (PRE) AQUI")
+- Bug: lista dentro de colspan em tabela (testar rowspan)
+- Colocar tabela, imagens e listas dentro de listas
+
+
+
+
+FEITOOOOO:
+
+18/09: 
+- Colocar <p><br></p> automático após tabela
+- Inserir <hr>
+
+25/09:
+- Mudança dos atalhos de "ctrl" para "alt"
+
+27/09:
+- Colocar quebra de linha <br> dentro de tabela
+- Melhorar o exemplo quando digita o atalho de tabela (ctrl + b)
+
+30/09:
+- Add funcionalidade blockquote
+- Marcação de palavras proibidas e números juntos de unidades (200mm, 3kg)
+- Atalho para blockquote (alt + k) e atalho secreto para parágrafo com quebra de linha (ctrl + alt + s)
+
+01/10
+- Melhorar o CSS para parecer o do Aprenda Mais
+- Colocar a opção <p><br></p>
+- Negrito não funciona dentro de blockquote
+
+
+02/10:
+- Selecionar texto e aplicar blockquote e table
+- Palavras proibidas funcionando dentro de blockquote
+
+03/10:
+- Colocar número da imagem automaticamente
+- Palavras proibidas em legenda de imagem e descrição de imagem
+- No código html está ficando as quebras de linha
+
+07/10:
+- Palavras proibidas não funciona dentro de título
+- Atalho para (th) e (th). (th) -> alt + h || (th): -> alt + j
+- Atalho para "Gerar" -> ctrl + enter.
+
+08/10:
+- Lista está funcionando dentro de tabela (não em colspan)
+- Add <sub> e <sup>
+- Fix <p><br></p> duplicado
+
+
+
+
+VANTAGENS:
+- Elimina espaços e quebras de texto excessivas;
+- Inclui automaticamente padrões de espaçamento
+- Inclui automaticamente padrões de alinhamento
+- Destaca palavras proibidas, perguntas retóricas e ausência de espaçamento entre números e unidades
+- Converte tabelas com todas as funcionalidades (formatação de cabeçalho, centralização de conteúdo, colspan, rowspan, lista dentro de célula)
+- Converte listas ordenadas e não ordenadas
+- Inclui automaticamente imagem de marcação
+- Inclui automaticamente numeração de imagens
+- Inclui recuo de citação (blockquote)
+- Inclui quebra de linha (br)
+- Inclui linha (hr)
+- Inclui negrito e itálico
+- Formata conteúdo em plain text (texto sem formatação)
+- Formata conteúdo em html
+- Salva automaticamente no local storage
+- Inclui funções sobrescrito, superscrito, <pre> e <code>
+
+
+
+
+
+
+
+ ### Instruções do Converte Mais 1.0  ### (p)
+
+(p)(br)(p)(p)(br)(p)
+
+Essa é uma ferramenta projetada para auxiliar na conversão dos cadernos temáticos tanto para o formato de texto corrido (*plain text*) como para html. A ideia surgiu para auxiliar em algumas tarefas repetitivas que poderiam ser automatizadas, como:(p)
+
+(ul)Eliminação       de espaços e      quebras de linhas
+
+ excessivas; (ul) Separação de números e unidades de medida como 2m ou 30ºC; (ul)Evitar perguntas retóricas (sabe quais são,   certo?); (ul)Evitar o uso algumas palavras como "aluno" ou "aluna"; (ul)Padronizar espaçamentos; (ul)Padronizar a inserção de imagens.(p)
+
+Posteriormente outras tarefas também foram adicionadas a ferramenta como:(p)
+
+ #####  Inserção de tabela ##### (p)
+
+(p)(table)
+(th):Tabelas com todas as funcionalidades necessárias (colspan=3);;
+Mesclagem horizontal ;
+E células de cabeçalho;
+Como na linha acima;;
+Mas também (ul)Listas (ul)**Negrito** (ul)*Itálico* (ul)Alertas de erros? ;
+:Textos centralizados;
+E mesclagem vertical (rowspan=2);;
+A tabela já fica centralizada;
+E com as bordas corretas ;
+(table)(p)
+
+ ##### Inserção de imagens ##### (p)
+
+(p) (img) LEGENDA | FONTE | DESCRIÇÃO (p)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ###  Instruções para usar o Converte Mais ###
+
+(p)O conversor usa marcadores para fazer a conversão para tags html.
+
+(p)É só colocar a tag html porém entre parênteses. Simples.
+
+(p)O marcador "p" entre parênteses é um parágrafo, como você já deve ter percebido.(p)
+
+(ul)O marcador "ul" é uma lista não ordenada.
+(ul)Que são aquelas listas com uma bolinha/bullet na frente dos itens.
+(ul)Ela também pode ser acessada com a tecla de atalho "Alt + D".
+
+(p)Ah, quando você mudar de marcador, você deve sempre colocar antes um "p", tipo assim => (p)
+
+(ol)O marcador "ol" é uma lista ordenada.
+(ol)Que são aquelas que são numeradas em ordem sequencial.(p)
+
+(code)apenas um teste de código(p)
+(code)outro código(p)
+(code)outro código(p)
+
+(p)testezinho(p)
+
+(ol)lkjlkjl
+(ol)lkjlkjl
+(ol)sldkfjslkfjs
+
+(p)
+
+
+
+
+
+// Função que permite inserir o conteúdo associado ao clique de um botão no local onde estiver o cursor no textarea
+function insertTextAtCursor(text) {
+    // Verifica se o comando 'insertText' é suportado
+    if (document.execCommand) {
+        textarea.focus(); // Garante que o textarea tenha foco
+        document.execCommand('insertText', false, text);
+    } else {
+        // Fallback caso 'execCommand' não seja suportado
+        const startPos = textarea.selectionStart;
+        const endPos = textarea.selectionEnd;
+
+        // Insere o texto na posição atual do cursor
+        const beforeText = textarea.value.substring(0, startPos);
+        const afterText = textarea.value.substring(endPos, textarea.value.length);
+        textarea.value = beforeText + text + afterText;
+
+        // Reposiciona o cursor após o texto inserido
+        textarea.selectionStart = textarea.selectionEnd = startPos + text.length;
+
+        textarea.focus(); // Foco de volta para a área de texto
+    }
+}
+
+
+
+#################################
+##### SALVAR NO GOOGLE DOCS #####
+#################################
+
+Sim, é possível implementar a funcionalidade de salvar o conteúdo de um `textarea` diretamente em um arquivo no Google Docs, utilizando a API do Google Drive e Google Docs. No entanto, o processo requer a autenticação do usuário e permissões para acessar sua conta do Google.
+
+Aqui está um resumo dos passos que você precisaria seguir para implementar essa funcionalidade:
+
+### 1. Habilitar a API do Google Drive e Google Docs
+Primeiro, é necessário habilitar as APIs do Google Drive e do Google Docs no console de desenvolvedores do Google.
+
+- Acesse o [Google Cloud Console](https://console.cloud.google.com/).
+- Crie um novo projeto ou use um existente.
+- No menu “APIs e Serviços”, habilite a **Google Drive API** e a **Google Docs API**.
+- Crie credenciais OAuth 2.0 para autenticar o acesso ao Google Drive e Docs.
+
+### 2. Autenticação com OAuth 2.0
+Você precisará autenticar os usuários para que possam acessar suas contas do Google e criar ou modificar documentos no Google Docs.
+
+Utilize a biblioteca **Google API JavaScript Client** para facilitar a autenticação e o acesso à API.
+
+Inclua o seguinte script em seu HTML para carregar a biblioteca Google API:
+```html
+<script async defer src="https://apis.google.com/js/api.js"></script>
+```
+
+Em seguida, você precisará de uma função JavaScript para inicializar a autenticação e pedir permissões ao usuário.
+
+### 3. Autenticação e Permissões
+Aqui está um exemplo de como configurar a autenticação e autorizar o acesso ao Google Docs e Google Drive:
+
+```javascript
+let CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';  // Substitua pelo seu CLIENT_ID
+let API_KEY = 'YOUR_API_KEY';  // Substitua pelo seu API_KEY
+
+let DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest", 
+                      "https://docs.googleapis.com/$discovery/rest?version=v1"];
+
+let SCOPES = "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/documents";
+
+function handleClientLoad() {
+  gapi.load('client:auth2', initClient);
+}
+
+function initClient() {
+  gapi.client.init({
+    apiKey: API_KEY,
+    clientId: CLIENT_ID,
+    discoveryDocs: DISCOVERY_DOCS,
+    scope: SCOPES
+  }).then(() => {
+    // Verifica se o usuário já está autenticado
+    gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+    updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+
+    document.getElementById('authorize_button').onclick = handleAuthClick;
+    document.getElementById('signout_button').onclick = handleSignoutClick;
+  });
+}
+
+function handleAuthClick(event) {
+  gapi.auth2.getAuthInstance().signIn();
+}
+
+function handleSignoutClick(event) {
+  gapi.auth2.getAuthInstance().signOut();
+}
+
+function updateSigninStatus(isSignedIn) {
+  if (isSignedIn) {
+    // Permitir salvar no Google Docs
+  } else {
+    // Pedir ao usuário para autenticar
+  }
+}
+```
+
+### 4. Criar e Salvar o Documento no Google Docs
+Uma vez autenticado, você pode criar e salvar o conteúdo do `textarea` no Google Docs com a API. Aqui está como você faria isso:
+
+```javascript
+function saveToGoogleDocs(textContent) {
+  // Cria um novo documento no Google Docs
+  gapi.client.docs.documents.create({
+    title: 'Novo Documento',
+  }).then((response) => {
+    const documentId = response.result.documentId;
+
+    // Atualiza o conteúdo do documento com o texto do textarea
+    return gapi.client.docs.documents.batchUpdate({
+      documentId: documentId,
+      requests: [
+        {
+          insertText: {
+            location: {
+              index: 1, // Insere no início do documento
+            },
+            text: textContent, // Texto do textarea
+          }
+        }
+      ]
+    });
+  }).then((response) => {
+    console.log("Documento criado e salvo no Google Docs");
+  }, (err) => {
+    console.error("Erro ao criar documento no Google Docs", err);
+  });
+}
+```
+
+### 5. Conectando o `textarea` ao processo de salvamento
+Você pode capturar o conteúdo do `textarea` e, quando o usuário clicar em "Salvar no Google Docs", chamar a função para salvar no Google Docs:
+
+```javascript
+document.getElementById('save_button').onclick = function() {
+  let textContent = document.getElementById('textarea').value;
+  saveToGoogleDocs(textContent);
+};
+```
+
+### 6. HTML de exemplo:
+Aqui está como ficaria seu HTML com botões para autenticar e salvar o conteúdo no Google Docs:
+
+```html
+<textarea id="textarea"></textarea>
+<button id="authorize_button">Autorizar Google Docs</button>
+<button id="signout_button">Sair</button>
+<button id="save_button">Salvar no Google Docs</button>
+
+<script async defer src="https://apis.google.com/js/api.js" onload="handleClientLoad()"></script>
+```
+
+### 7. Conclusão
+Esse exemplo básico mostra como integrar a API do Google Docs e Google Drive em seu projeto para salvar o conteúdo de um `textarea` em um documento. Dependendo do seu caso de uso, você pode precisar expandir essa solução para lidar com erros, permitir a escolha de arquivos existentes, etc.
+
+
+#################################
+##### SALVAR NO GOOGLE DOCS #####
+#################################
+
+
+
+
+
+
+
