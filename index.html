@@ -59,6 +59,9 @@
             background-color: khaki;
             border-radius: 0px;
         }
+        sub, sup {
+            font-size: 11px;
+        }
         .margin {
             margin: 0 auto;
             width: var(--largura);
@@ -117,7 +120,7 @@
             background-color: var(--botaoGerar);
             border-color: var(--botaoGerar);
         }
-        #copyTextButton, #copyHtmlButton {
+        #copyTextButton, #copyHtmlButton, #listaDeImagens {
             background-color: black;
             color: white;
             text-transform: uppercase;
@@ -130,13 +133,24 @@
             flex-direction: column;
             gap: 15px;
         }
-        .textos__html, .textos__preview {
+        .textos__html {
             width: 100%;
             padding: 10px;
             display: flex;
             flex-direction: column;
             border: 1px solid black;
             border-radius: 10px;
+        }
+        #htmlListaDeImagens {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        #htmlListaDeImagens img {
+            width: 240px;
+            object-fit: cover;
         }
         table {
             border-collapse: collapse;
@@ -182,9 +196,6 @@
         visibility: visible;
         opacity: 1;
         }
-        .buttons .tooltip:nth-of-type(5) .tooltiptext {
-            width: 30px;
-        }
         #generateButton .tooltiptext {
             width: 110px;
         }
@@ -216,7 +227,7 @@
                             <span class="tooltiptext">Alt + X</span>
                         </button>
                         <button id="copyItalicButton" class="tooltip">Itálico
-                            <span class="tooltiptext">*</span>
+                            <span class="tooltiptext">Alt + Z</span>
                         </button>
                         <button id="copyH4Button" class="tooltip">H4
                             <span class="tooltiptext">Alt + 4</span>
@@ -237,6 +248,7 @@
                     <div class="buttons__functions__copy">
                         <button id="copyTextButton">COPIAR TEXTO</button>
                         <button id="copyHtmlButton">COPIAR HTML</button>
+                        <!-- <button id="listaDeImagens">LISTA DE IMAGENS</button> -->
                     </div>
                 </div>
                 <button id="generateButton" class="tooltip" onclick="generateText()">Gerar
@@ -246,12 +258,25 @@
             
 
             <div class="textos">
-                <div class="textos__preview">
+                <div class="textos__html">
                     <div id="htmlResultado"></div>
                 </div>
                 <div class="textos__html">
                     <h3>HTML</h3>
                     <pre id="htmlCodigo" class="textos__html__gerado"></pre>
+                </div>
+                <div class="textos__html">
+                    <h3>LISTA DE IMAGENS</h3>
+                    <div id="htmlListaDeImagens" class="textos__html__gerado">
+                        <!-- <img src="https://conteudo.imguol.com.br/c/esporte/c6/2024/10/09/dorival-junior-tecnico-da-selecao-em-coletiva-1728477101365_v2_300x225.jpg">
+                        
+                        <img src="https://conteudo.imguol.com.br/c/tab/f9/2024/10/08/tabata-amaral-1728425099340_v2_900x506.jpg">
+                    
+                        <img src="https://conteudo.imguol.com.br/c/parceiros/2b/2023/02/02/casa-da-mulher-brasileira-arquivo-midiamax-1675317631928_v2_450x337.jpg">
+                    
+                    
+                        <img src="https://capitalreset.uol.com.br/wp-content/plugins/seox-image-magick/imagick_convert.php?width=1368&height=769&format=.jpg&quality=91&imagick=uploads.capitalreset.com/wp-content/uploads/2023/10/Desmatamento-madeira-amazonia.jpg"> -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -263,19 +288,23 @@
         // Variáveis que recebem os diversos processamentos e que vão ser inseridas nas divs
         let htmlOutput = '';
         let htmlResultado = '';
+        let htmlListaDeImagens = '';
 
         // Nomes das divs onde entra o html código e o html resultante
         const htmlCodigoDiv = document.getElementById('htmlCodigo');
         const htmlResultadoDiv = document.getElementById('htmlResultado');
+        const htmlListaDeImagensDiv = document.getElementById('htmlListaDeImagens');
 
         // ::: PROCESSA BOLD E ITÁLICO :::
         function converteInlineTags(text) {
 
-            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Negrito com **
-            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Itálico com *
+            text = text.replace(/\(st\)(.*?)\(st\)/g, '<strong>$1</strong>'); // Negrito com (st)
+            text = text.replace(/\(em\)(.*?)\(em\)/g, '<em>$1</em>'); // Negrito com (em)
             text = text.replace(/\(sup\)(.*?)\(sup\)/g, '<sup>$1</sup>'); // Superescrito com (sup)
             text = text.replace(/\(sub\)(.*?)\(sub\)/g, '<sub>$1</sub>'); // Superescrito com (sup)
             text = text.replace(/\(br\)/g, '<br>'); // Insere quebra de linha <br>
+
+            text = text.replace(/\(pre\)(.*?)\(pre\)/g, '<span style="white-space: nowrap;">$1</span>'); // Insere tag <pre>
 
             text = destacarPalavras(text);
 
@@ -284,7 +313,7 @@
 
         // Destacar palavras e letras "proibidas"
         const palavrasProibidas = ['alunos', 'aluno', 'aluna', 'alunas', '\\?'];
-        const unidadesMedida = ['ºC', 'kg', 'm2', 'mm', 'km', 'L', 'ml', 'm', 'g', 'º'];
+        const unidadesMedida = ['ºC', 'kg', 'm2', 'mm', 'km', 'L', 'ml', 'm', 'g', 'º', 'cm'];
 
 
         function destacarPalavras(texto) {
@@ -292,6 +321,7 @@
                 // Tratar o ponto de interrogação separadamente
                 if (palavra === '\\?') {
                     texto = texto.replace(/([\p{L}\w]+)\?/gu, '<span style="color: red; font-weight: bold;">$1?</span>');
+                    // console.log(texto);
                 } else {
                     // Regex com bordas de palavras para outras palavras proibidas
                     const regex = new RegExp(`\\b(${palavra})\\b`, 'gi');
@@ -312,8 +342,8 @@
 
         function limpaTexto(texto){
             return texto
-            .replace(/\n+/g, '')        // Remove quebra de linha
-            .replace(/\s{3,}/g, '')     // Remove espaços excessivos
+            .replace(/[\r\n]+/g, ' ')        // Remove quebra de linha
+            .replace(/\s{2,}/g, ' ')     // Remove espaços excessivos
             .trim();                    // Remove espaços no início e no final
         }
 
@@ -321,30 +351,36 @@
         function generateText() {
             
             let textInput = document.getElementById('textInput').value;
+            // console.log(textInput);
             
-            limpaTexto(textInput);
+            // textInput = limpaTexto(textInput);
 
-            // textInput = textInput
-            // .replace(/\n+/g, ' ') // Remove quebras de linha
-            // .replace(/\s{3,}/g, ' ') // Remove espaços excessivos
+            // let teste = textInput
+            // .replace(/[\r\n]+/g, ' ') // Remove quebras de linha
+            // .replace(/\s{2,}/g, ' ') // Remove espaços excessivos
             // .trim(); // Remove espaços no início e no final
             
             // Divide o texto em parágrafos usando (p)
             const paragraphs = textInput.split('(p)').map(p => p.trim()).filter(p => p.length > 0);
+            // console.log(paragraphs);
             
             // Variáveis que recebem os diversos processamentos ao longo do script e que vão ser inseridas nas divs
             htmlOutput = '';
             htmlResultado = '';
+            htmlListaDeImagens = '';
             
             processarParagrafos(paragraphs);
 
             // Mostra a div com os previews de texto e html
             document.querySelector('.textos').style.display = 'flex';
 
+
+
             const htmlOutputAjustado = removeEspacamentoDuplicado(htmlOutput);
             
             htmlCodigoDiv.textContent = htmlOutputAjustado;
             htmlResultadoDiv.innerHTML = htmlOutputAjustado;
+            htmlListaDeImagensDiv.innerHTML = htmlListaDeImagens;
         }
 
         function removeEspacamentoDuplicado(html) {
@@ -359,6 +395,7 @@
         // ::: 2 - PROCESSA OS PARÁGRAFOS ::: 
         function processarParagrafos(paragraphs) {
             let photoNumber = 1;
+            let contador = 1;
             paragraphs.forEach(paragraph => {
 
             // Se for uma tag <pre>, pula a remoção de espaços
@@ -370,13 +407,9 @@
                     htmlOutput += `<div style="white-space: pre-wrap;">${converteInlineTags(preContent)}</div>\n\n`;
                     
                 } else {
-                    // Para outros tipos de parágrafo, primeiro remove espaços e processa normalmente
-                    limpaTexto(paragraph);
+                    // Se não for <pre> remove quebras e espaços excessivos
+                    paragraph = limpaTexto(paragraph);
                     // console.log(paragraph);
-
-                    // paragraph.replace(/\n+/g, ' ')  // Substitui quebras de linha por um espaço
-                    //     .replace(/\s{3,}/g, ' ')    // Remove espaços consecutivos (3 ou mais)
-                    //     .trim();                    // Remove espaços no início e no final da string
 
                     // Converte hashtags em títulos ou mantém como parágrafo
                     const convertedText = converteTitulos(paragraph);
@@ -420,12 +453,32 @@
                         htmlOutput += `<hr>\n\n`;
 
                     } else if (paragraph.startsWith('(ul)')) {
+                        
                         const listItems = paragraph.split('(ul)').map(item => item.trim()).filter(item => item.length > 0);
                         htmlOutput += '<ul>\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ul>\n\n';
 
                     } else if (paragraph.startsWith('(ol)')) {
                         const listItems = paragraph.split('(ol)').map(item => item.trim()).filter(item => item.length > 0);
-                        htmlOutput += '<ol>\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
+
+                        if (listItems[0].startsWith('(x.)')){
+                            listItems[0] = listItems[0].replace('(x.)', '');
+                            htmlOutput += '<ol style="list-style-type: lower-alpha;">\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
+                        } else if (listItems[0].startsWith('(X.)')){
+                            listItems[0] = listItems[0].replace('(X.)', '');
+                            htmlOutput += '<ol style="list-style-type: upper-alpha;">\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
+                        } else if (listItems[0].startsWith('(i.)')){
+                            listItems[0] = listItems[0].replace('(i.)', '');
+                            htmlOutput += '<ol style="list-style-type: lower-roman;">\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
+                        } else if (listItems[0].startsWith('(I.)')){
+                            listItems[0] = listItems[0].replace('(I.)', '');
+                            htmlOutput += '<ol style="list-style-type: upper-roman;">\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
+                        } else if (listItems[0].startsWith('(0.)')){
+                            listItems[0] = listItems[0].replace('(0.)', '');
+                            htmlOutput += '<ol style="list-style-type: decimal-leading-zero;">\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
+                        } 
+                        else {
+                            htmlOutput += '<ol>\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
+                        }
 
                     } else if (paragraph.startsWith('(img)')) {
                         // Processa figure e insere imagem de marcação
@@ -433,15 +486,40 @@
 
                         const autoFigureNumber = photoNumber++;
 
-                        const [imgFigureCaption, imgSource, imgDescription] = imgContent.split('|').map(item => item.trim());
+                        const [imgUrl, imgFigureCaption, imgSource, imgDescription] = imgContent.split('|').map(item => item.trim());
 
                         // Palavras proibidas em legenda e descrição de fotos
                         const imgFigureCaptionDestacado = destacarPalavras(imgFigureCaption);
                         const imgDescriptionDestacado = destacarPalavras(imgDescription);
 
+
+
+                        // CÓDIGO ANTIGO, SEM POSSIBILIDADE DE INCLUIR FOTO VALENDO
+                        // htmlOutput += `<figure>\n`;
+                        // htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="https://placehold.co/500x300/32ab53/black?text=${imgFigureCaption || ''}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
+                        // htmlOutput += `\t<p style="text-align: center;">Figura ${autoFigureNumber} - ${imgFigureCaptionDestacado || '\n'}<br>\n\t\t<sub>Fonte: ${imgSource || ''}</sub>\n\t</p>\n`;
+                        // htmlOutput += `\t<p>\n\t\t<sub>Descrição da imagem: ${imgDescriptionDestacado || ''}</sub>\n\t</p>\n`;
+                        // htmlOutput += `</figure>\n\n`;
+                        // htmlOutput += `<p><br></p>\n\n`;
+
+
+
+                        // CÓDIGO PARA ADICIONAR URL DA FOTO VALENDO
                         htmlOutput += `<figure>\n`;
-                        htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="https://placehold.co/500x300/32ab53/black?text=${imgFigureCaption || ''}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
-                        htmlOutput += `\t<p style="text-align: center;">Figura ${autoFigureNumber} - ${imgFigureCaptionDestacado || '\n'}<br>\n\t\t<sub>Fonte: ${imgSource || ''}</sub>\n\t</p>\n`;
+                        
+                        let imgSourceUrl;
+                        
+                        if (imgUrl === 'URL'){
+                            htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="https://placehold.co/500x300/32ab53/black?text=${imgFigureCaptionDestacado}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
+                            htmlListaDeImagens += `<img src="https://placehold.co/500x300/32ab53/black?text=${imgFigureCaptionDestacado}">\n`;
+                        } else {
+                            htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="${imgUrl || ''}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
+                            htmlListaDeImagens += `<a href="#${contador}" onclick="copiaUrl('${imgUrl}')"><img id="${contador}" src="${imgUrl || ''}"></a>\n`;
+                            imgSourceUrl = imgUrl;
+                        }
+                        contador++;
+
+                        htmlOutput += `\t<p style="text-align: center;">Figura ${autoFigureNumber} - ${imgFigureCaptionDestacado || '\n'}<br>\n\t\t<sub>Fonte: ${imgSourceUrl || imgSource || ''}</sub>\n\t</p>\n`;
                         htmlOutput += `\t<p>\n\t\t<sub>Descrição da imagem: ${imgDescriptionDestacado || ''}</sub>\n\t</p>\n`;
                         htmlOutput += `</figure>\n\n`;
                         htmlOutput += `<p><br></p>\n\n`;
@@ -454,6 +532,18 @@
                 }
             });
         }
+
+        // FUNÇÃO PARA COPIAR A IMAGEM CORRETA PARA A ÁREA DE TRANSFERÊNCIA
+        function copiaUrl(url){
+            // console.log(url);
+            const tempInput = document.createElement('input');
+            tempInput.value = url;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+        }
+
 
         // ::: 3 - CONVERSÃO DE # EM TÍTULOS :::
         function converteTitulos(text) {
@@ -478,13 +568,37 @@
                 } else {
                     return `<p><br></p>\n\n<h${level}>${tituloPalavrasProibidas.trim()}</h${level}>`;
                 }
-
             }
 
             // Se não for título, retorna o texto original
             return `<p>${converteInlineTags(text)}</p>`;
         }
 
+
+        // Define o texto das teclas de atalhos e botões simultaneamente
+        const atalhos = {
+            strong: {marcador: "(st)", tecla: "x"},
+            em: {marcador: "(em)", tecla: "z"},
+            ul: {marcador: "(ul)", tecla: "d"},
+            ol: {marcador: "(ol)", tecla: "e"},
+            p: {marcador: "(p)", tecla: "s"},
+            hr: {marcador: "(linha)", tecla: "l"},
+            code: {marcador: "(code)", tecla: "c"},
+            br: {marcador: "(br)", tecla: "q"},
+            th: {marcador: "(th)", tecla: "h"},
+            thcentralizado: {marcador: "(th):", tecla: "j"},
+            h1: {marcador: " # ", tecla: "1"},
+            h2: {marcador: " ## ", tecla: "2"},
+            h3: {marcador: " ### ", tecla: "3"},
+            h4: {marcador: " #### ", tecla: "4"},
+            h5: {marcador: " ##### ", tecla: "5"},
+            h6: {marcador: " ###### ", tecla: "6"},
+            h6: {marcador: " ###### ", tecla: "6"},
+            h6: {marcador: " ###### ", tecla: "6"},
+            img: {marcador: "\n(p) (img) URL | LEGENDA | FONTE | DESCRIÇÃO (p)\n", tecla: "i"},
+            table: {marcador: "\n(p)(table)\n\n(table)(p)\n", tecla: "b", antes: "\n(p)(table)\n", depois: "\n(table)(p)\n"},
+            blockquote: {marcador: "\n(p)(block)(p)\n\n(p)(/block)(p)\n", tecla: "k", antes: "\n(p)(block)(p)\n", depois: "\n(p)(/block)(p)\n" },
+        }
 
         // ::: COPIAR PARA ÁREA DE TRANSFERÊNCIA :::
         function copyToClipboard(content) {
@@ -505,52 +619,52 @@
 
         // Add event listener for the new "(p)" button
         document.getElementById('copyPButton').addEventListener('click', () => {
-            copyToClipboard('(p)');
+            copyToClipboard(atalhos["p"]["marcador"]);
         });
 
         // Add event listener for the new "(ul)" button
         document.getElementById('copyUlButton').addEventListener('click', () => {
-            copyToClipboard('(ul)');
+            copyToClipboard(atalhos["ul"]["marcador"]);
         });
 
         // Add event listener for the new "(ol)" button
         document.getElementById('copyOlButton').addEventListener('click', () => {
-            copyToClipboard('(ol)');
+            copyToClipboard(atalhos["ol"]["marcador"]);
         });
 
         // Add event listener for the new bold button
         document.getElementById('copyBoldButton').addEventListener('click', () => {
-            copyToClipboard('**');
+            copyToClipboard(atalhos["strong"]["marcador"]);
         });
 
         // Add event listener for the new italic button
         document.getElementById('copyItalicButton').addEventListener('click', () => {
-            copyToClipboard('*');
+            copyToClipboard(atalhos["em"]["marcador"]);
         });
 
         // Add event listener for the new H4 button
         document.getElementById('copyH4Button').addEventListener('click', () => {
-            copyToClipboard(' #### ');
+            copyToClipboard(atalhos["h4"]["marcador"]);
         });
 
         // Add event listener for the new H5 button
         document.getElementById('copyH5Button').addEventListener('click', () => {
-            copyToClipboard(' ##### ');
+            copyToClipboard(atalhos["h5"]["marcador"]);
         });
 
         // Add event listener for the new Image button
         document.getElementById('copyImgButton').addEventListener('click', () => {
-            copyToClipboard('\n(p) (img) LEGENDA | FONTE | DESCRIÇÃO (p)\n');
+            copyToClipboard(atalhos["img"]["marcador"]);
         });
 
         // Add event listener for the new Table button
         document.getElementById('copyTableButton').addEventListener('click', () => {
-            copyToClipboard('(p)(table)\n\n(table)(p)\n');
+            copyToClipboard(atalhos["table"]["marcador"]);
         });
 
         // Event Listener para o botão Exemplo
         document.getElementById('copyBlockquoteButton').addEventListener('click', () => {
-            copyToClipboard('(block)(p)\n\n(p)(/block)\n\n');
+            copyToClipboard(atalhos["blockquote"]["marcador"]);
         });
 
 
@@ -609,12 +723,12 @@
 
         textarea.addEventListener('keydown', function(event) {
             
-            if (event.altKey && event.ctrlKey && event.key.toLowerCase() === 's') {
+            if (event.altKey && event.ctrlKey && event.key.toLowerCase() === atalhos["p"]["tecla"]) {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(p)\n'); // Insere o texto "(p)"
-            } else if (event.altKey && event.key.toLowerCase() === 's') {
+                insertTextAtCursor(atalhos["p"]["marcador"] + '\n'); // Insere o texto "(p)"
+            } else if (event.altKey && event.key.toLowerCase() === atalhos["p"]["tecla"]) {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(p)'); // Insere o texto "(p)"
+                insertTextAtCursor(atalhos["p"]["marcador"]); // Insere o texto "(p)"
             }
             
             if (event.ctrlKey && event.key === 'Enter') {
@@ -622,79 +736,84 @@
                 generateText(); // Chama a função generateText()
             }
             
-            if (event.altKey && event.key.toLowerCase() === 'd') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["ul"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(ul)'); // Insere o texto "(ul)"
+                insertTextAtCursor(atalhos["ul"]["marcador"]); // Insere o texto "(ul)"
             }
             
-            if (event.altKey && event.key.toLowerCase() === 'e') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["ol"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(ol)'); // Insere o texto "(ol)"
+                insertTextAtCursor(atalhos["ol"]["marcador"]); // Insere o texto "(ol)"
             }
             
-            if (event.altKey && event.key.toLowerCase() === 'c') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["code"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(code)'); // Insere o texto "(code)"
+                insertTextAtCursor(atalhos["code"]["marcador"]); // Insere o texto "(code)"
             }
             
-            if (event.altKey && event.key.toLowerCase() === 'q') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["br"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(br)'); // Insere o texto "(br)"
+                insertTextAtCursor(atalhos["br"]["marcador"] + '\n'); // Insere o texto "(br)"
             }
             
-            if (event.altKey && event.key.toLowerCase() === 'l') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["hr"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(linha)'); // Insere o texto "(linha)"
+                insertTextAtCursor(atalhos["hr"]["marcador"]); // Insere o texto "(linha)"
             }
             
-            if (event.altKey && event.key.toLowerCase() === 'h') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["th"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(th)'); // Insere o texto "(th)"
+                insertTextAtCursor(atalhos["th"]["marcador"]); // Insere o texto "(th)"
             }
             
-            if (event.altKey && event.key.toLowerCase() === 'j') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["thcentralizado"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('(th):'); // Insere o texto "(th):"
+                insertTextAtCursor(atalhos["thcentralizado"]["marcador"]); // Insere o texto "(th):"
             }
 
-            if (event.altKey && event.key.toLowerCase() === 'x') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["strong"]["tecla"]) {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('**'); // Insere o texto "**"
+                insertTextAtCursor(atalhos["strong"]["marcador"]); // Insere o texto "(st)"
             }
 
-            if (event.altKey && event.key.toLowerCase() === '1') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["em"]["tecla"]) {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor(' # '); // Insere o texto " #### "
+                insertTextAtCursor(atalhos["em"]["marcador"]); // Insere o texto "(em)"
             }
 
-            if (event.altKey && event.key.toLowerCase() === '2') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["h1"]["tecla"]) {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor(' ## '); // Insere o texto " #### "
+                insertTextAtCursor(atalhos["h1"]["marcador"]); // Insere o texto " #### "
             }
 
-            if (event.altKey && event.key.toLowerCase() === '3') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["h2"]["tecla"]) {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor(' ### '); // Insere o texto " #### "
+                insertTextAtCursor(atalhos["h2"]["marcador"]); // Insere o texto " #### "
             }
 
-            if (event.altKey && event.key.toLowerCase() === '4') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["h3"]["tecla"]) {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor(' #### '); // Insere o texto " #### "
+                insertTextAtCursor(atalhos["h3"]["marcador"]); // Insere o texto " #### "
             }
 
-            if (event.altKey && event.key.toLowerCase() === '5') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["h4"]["tecla"]) {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor(' ##### '); // Insere o texto " ##### "
+                insertTextAtCursor(atalhos["h4"]["marcador"]); // Insere o texto " #### "
             }
 
-            if (event.altKey && event.key.toLowerCase() === '6') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["h5"]["tecla"]) {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor(' ###### '); // Insere o texto " ##### "
+                insertTextAtCursor(atalhos["h5"]["marcador"]); // Insere o texto " ##### "
             }
 
-            if (event.altKey && event.key.toLowerCase() === 'i') {
+            if (event.altKey && event.key.toLowerCase() === atalhos["h6"]["tecla"]) {
                 // event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor('\n(p) (img) LEGENDA | FONTE | DESCRIÇÃO (p)\n'); // Insere imagem
+                insertTextAtCursor(atalhos["h6"]["marcador"]); // Insere o texto " ##### "
+            }
+
+            if (event.altKey && event.key.toLowerCase() === atalhos["img"]["tecla"]) {
+                // event.preventDefault(); // Evita o comportamento padrão
+                insertTextAtCursor(atalhos["img"]["marcador"]); // Insere imagem
             }
 
             if (event.altKey && event.key === 'b') {
@@ -708,8 +827,8 @@
                 let selectedText = textarea.value.substring(start, end);
                 
                 // Adiciona os marcadores (p)(table) antes e depois da seleção
-                let before = '\n(p)(table)\n';
-                let after = '\n(table)(p)\n';
+                let before = atalhos["table"]["antes"];
+                let after = atalhos["table"]["depois"];
                 let newText = before + selectedText + after;
                 
                 // Atualiza o conteúdo do textarea com os marcadores
@@ -727,8 +846,8 @@
                 let selectedText = textarea.value.substring(start, end);
                 
                 // Adiciona os marcadores (p)(table) antes e depois da seleção
-                let before = '\n(p)(block)(p)\n';
-                let after = '\n(p)(/block)(p)\n';
+                let before = atalhos["blockquote"]["antes"];
+                let after = atalhos["blockquote"]["depois"];
                 let newText = before + selectedText + after;
                 
                 // Atualiza o conteúdo do textarea com os marcadores
@@ -848,16 +967,38 @@
                 const beforeList = content.split(/\s*\(ul\)/)[0].split(/\s*\(ol\)/)[0];
                 // console.log(beforeList);
                 const itemsUl = content.split(/\s*\(ul\)/).slice(1); // Divide e ignora a parte antes do primeiro (ul)
-                // console.log(itemsUl);
                 const itemsOl = content.split(/\s*\(ol\)/).slice(1); // Divide e ignora a parte antes do primeiro (ol)
-
+                
                 let listHtml = content; // Default to the original content
                 if (itemsUl.length > 0 && itemsUl[0].trim() !== '') {
                     const listItems = itemsUl.map(item => `<li>${item.trim()}</li>`).join('');
                     listHtml = `${beforeList} <ul>${listItems}</ul>`;
                 } else if (itemsOl.length > 0 && itemsOl[0].trim() !== '') {
-                    const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
-                    listHtml = `${beforeList} <ol>${listItems}</ol>`;
+                    if (itemsOl[0].startsWith('(x.)')){
+                        itemsOl[0] = itemsOl[0].replace('(x.)', '');
+                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
+                        listHtml = `${beforeList} <ol style="list-style-type: lower-alpha;">${listItems}</ol>`;
+                    } else if (itemsOl[0].startsWith('(X.)')){
+                        itemsOl[0] = itemsOl[0].replace('(X.)', '');
+                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
+                        listHtml = `${beforeList} <ol style="list-style-type: upper-alpha;">${listItems}</ol>`;
+                    } else if (itemsOl[0].startsWith('(i.)')){
+                        itemsOl[0] = itemsOl[0].replace('(i.)', '');
+                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
+                        listHtml = `${beforeList} <ol style="list-style-type: lower-roman;">${listItems}</ol>`;
+                    } else if (itemsOl[0].startsWith('(I.)')){
+                        itemsOl[0] = itemsOl[0].replace('(I.)', '');
+                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
+                        listHtml = `${beforeList} <ol style="list-style-type: upper-roman;">${listItems}</ol>`;
+                    } else if (itemsOl[0].startsWith('(0.)')){
+                        itemsOl[0] = itemsOl[0].replace('(0.)', '');
+                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
+                        listHtml = `${beforeList} <ol style="list-style-type: decimal-leading-zero;">${listItems}</ol>`;
+                    } else {
+                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
+                        listHtml = `${beforeList} <ol>${listItems}</ol>`;
+
+                    }
                 }
 
                 return `<${tag}>${listHtml}</${tag}>`;
