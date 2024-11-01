@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Docs em iframe</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+    .border {
+      border: 1px solid black;
+      border-radius: 10px;
+    }
+    .windows {
+      padding: 10px;
+      display: flex;
+      gap: 20px;
+    }
+    #iframe {
+      max-width: 100%;
+      width: 100%;
+      height: 600px;
+      /* border: none; */
+    }
+    .entry-data {
+      width: 100%;
+      flex-grow: 1;
+    }
+    #textarea {
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="windows">
+    <div class="entry-data">
+      <textarea id="textarea" style="width: 100%; height: 300px;" class="border"></textarea>
+     
+    </div>
+    <div class="entry-data">
+      <iframe id="iframe" class="border"></iframe>
+      <input type="file" id="fileInput" accept=".pdf" />
+      <button onclick="carregarPdf()">Enviar</button>
+      <input type="text" id="urlInput" placeholder="Cole a URL do PDF aqui" style="width: 100%;" />
+      <button onclick="salvarUrl()">Salvar URL</button>     
+    </div>
+  </div>
+
+  <script>
+    // Função para salvar a URL no localStorage
+    function salvarUrl() {
+      const url = document.getElementById("urlInput").value;
+      // if (url.endsWith(".pdf")) {
+        localStorage.setItem("pdfUrl", url);
+        // alert("URL salva com sucesso!");
+      // } else {
+      //   alert("Por favor, insira uma URL válida para um arquivo PDF.");
+      // }
+    }
+
+    // Função para carregar a URL do localStorage
+    function carregarPdf() {
+      const savedUrl = localStorage.getItem("pdfUrl");
+      if (savedUrl) {
+        document.getElementById("iframe").src = savedUrl;
+      }
+    }
+
+    // Evento para carregar o PDF do arquivo selecionado
+    document.getElementById("fileInput").addEventListener("change", function(event) {
+      const file = event.target.files[0];
+      // if (file && file.type === "application/pdf") {
+        const fileURL = URL.createObjectURL(file); // Cria uma URL temporária para o arquivo
+        const iframe = document.getElementById("iframe");
+        iframe.src = fileURL; // Define a URL como fonte do iframe
+      // } else {
+      //   alert("Por favor, selecione um arquivo PDF.");
+      // }
+    });
+
+    // Carregar automaticamente a URL salva ao iniciar a página
+    window.onload = carregarPdf;
+
+  </script>
+</body>
+</html>
+
+
+
+<!-- <iframe src="https://drive.google.com/file/d/1A-o4_gEfYDiinzmS_gJ3ykAW2SEP9ufr/preview" class="border" id="iframe" allow="autoplay"></iframe> -->
+
+
+<!-- <iframe src="https://docs.google.com/document/d/1C-zCgytXoAuJl1LDgUR9isYS_CL2CEh7SbwK9NnPw8o" allow="autoplay" class="entry-data border" id="janela"></iframe> -->
+<!-- <iframe src="https://dontpad.com/maisummoa" allow="autoplay" class="entry-data border" id="janela"></iframe> -->
