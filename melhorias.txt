@@ -4,8 +4,7 @@ MELHORIAS CONVERTE MAIS
 - Add: clicar no botão e incluir texto do botão no prompt
 - Fix: <table> lista dentro de colspan em tabela (testar rowspan)
 - Fix: <ul> e <ol> colocar tabela, imagens e listas dentro de listas
-- Add: colocar a imagem já correta e com um clique copiar a URL
-- Add: texto em duas colunas
+- Add: texto em duas colunas (<div style="column-count: 2; column-gap: 20px; text-align: center; white-space: pre-wrap;">)
 - Update: melhorar lista das imagens usadas (idéias: botão que abre popup/janela, dois cliques abre a foto em uma nova aba)
 - Add: possibilidade de editar o html direto
 - Add: escape para tags html
@@ -13,6 +12,13 @@ MELHORIAS CONVERTE MAIS
 - Fix: <strong> e <em> em legenda de foto
 - Add: botão para mandar sugestão
 - Add: carregar o pdf a ser convertido dentro da ferramenta
+- Add: botão para converter bullets "•" ou "-" em (ul)
+- Add: botão "TEXTO PARA QUESTÕES" (sem fotos, sem referências)
+
+- Update: inserir âncoras nas palavras proibidas para que possa clicar e levar até o ponto onde deve ser feito a edição
+- Update: <table> inserir título (legenda?) de tabela
+- Add: textarea secundário para "fixar" as referências e o "material baseado em" 
+
 
 
 
@@ -67,30 +73,65 @@ FEITOOOOO:
 
 13/10:
 - Add: implementei object para atalhos (ver em "const atalhos")
-- Add: implementei solução para não quebrar frase dentro de célula de tabela (ver "// Insere tag <pre>" dentro de converteInlineTags())
+- Add: <table> implementei solução para não quebrar frase dentro de célula de tabela (ver "// Insere tag <pre>" dentro de converteInlineTags())
 - Update: <ol> - atalho para "a.", "A.", "i.", "I." e "01.".
 
+14/10:
+- Update: <code> e <pre> criar um marcador para um bloco de código (ver "teste-pre-code.html")
 
+24/10:
+- Update: <ul> e <ol> Capitalizar a primeira letra da frase
+- Add: buscador de hífen (para palavras hifenizadas que ficam quebradas)
+
+31/10:
+- Update: <img> imagens de marcação no formato png que são copiadas para o arquivo texto
+- Update: <table> desabilitei a solução para não quebrar frase dentro de célula de tabela (feito no dia 13/10) por conta da questão que é uma tag <span>
 
 
 
 VANTAGENS:
 - Elimina espaços e quebras de texto excessivas;
-- Inclui automaticamente padrões de espaçamento
-- Inclui automaticamente padrões de alinhamento
-- Destaca palavras proibidas, perguntas retóricas e ausência de espaçamento entre números e unidades
-- Converte tabelas com todas as funcionalidades (formatação de cabeçalho, centralização de conteúdo, colspan, rowspan, lista dentro de célula)
-- Converte listas ordenadas e não ordenadas
-- Inclui automaticamente imagem de marcação
-- Inclui automaticamente numeração de imagens
-- Inclui recuo de citação (blockquote)
-- Inclui quebra de linha (br)
-- Inclui linha (hr)
-- Inclui negrito e itálico
-- Formata conteúdo em plain text (texto sem formatação)
-- Formata conteúdo em html
-- Salva automaticamente no local storage
-- Inclui funções sobrescrito, superscrito, <pre> e <code>
+- Inclui automaticamente padrões de espaçamento (<p><br></p> após imagens e tabelas e antes de títulos);
+- Inclui automaticamente padrões de alinhamento (centraliza imagens, tabelas);
+- Destaca palavras proibidas, perguntas retóricas e ausência de espaçamento entre números e unidades;
+- Converte tabelas com todas as funcionalidades (formatação de cabeçalho (th), centralização de conteúdo (colocar dois pontos ":" no início do texto da célula), colspan, rowspan, lista dentro de célula);
+- Converte listas ordenadas (ol) e não ordenadas (ul);
+- Converte a primeira letra do item de lista em maiúscula;
+- Inclui automaticamente imagem (img), recomendo usar o atalho "Alt + I";
+- Inclui automaticamente numeração de imagens (não precisa fazer nada, ao clicar em "Gerar" ele identifica todas as imagens e numera automaticamente);
+- No final da página inclui a lista das imagens usadas no curso e, ao clicar em cima delas, o endereço (URL) já é copiado para a área de transferência;
+- Inclui recuo de citação (blockquote) recomendo usar o atalho "Alt + K";
+- Inclui quebra de linha (br) atalho "Alt + Q";
+- Inclui linha (linha) atalho "Alt + L";
+- Inclui negrito (st) atalho "Alt + X";
+- Inclui itálico (em) atalho "Alt + Z";
+- Gera conteúdo para ser colado no DOCS usando botão "COPIAR TEXTO";
+- Gera html para ser colado no Moodle usando botão "COPIAR HTML";
+- Salva automaticamente no local storage, ou seja, se der um reload/F5, se fechar a janela, se desligar o computador, o texto permanece na janela.
+- Inclui funções sobrescrito, superscrito, <pre>, <code> e <pre><code> para blocos de código
+
+
+
+LISTA ATALHOS:
+(precode) - ALT + SHIFT + C
+(code) - ALT + C
+(pre) - ALT + P
+(th) - ALT + H 
+(th): - ALT + J
+(ol) - ALT + F
+(ul) - ALT + D
+(p) - ALT + S
+(linha) - ALT + L
+(st) - ALT + X
+(em) - ALT + Z
+
+(blockquote) - ALT + K
+(table) - ALT + B
+(p) + quebra de linha - CTRL + ALT + S
+substitui bullets "•" e hífens "-" por (ul) - CTRL + ALT + D
+substitui "1.", "1-", "1)" por (ol) - CTRL + ALT + F
+
+
 
 
 
