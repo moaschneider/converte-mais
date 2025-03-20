@@ -4,32 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Converte Mais 2.0</title>
-
-    <!-- Sora -->
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
-
+    <title>Converte Mais 1.0</title>
     <!-- Libre Franklin -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
     <!-- Century Gothic Paneuropean -->
     <link href="https://fonts.cdnfonts.com/css/century-gothic-paneuropean" rel="stylesheet">
-
     <!-- Roboto -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-
-    <style>
+                
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=Lqn9PvOkX6u-HebZ1CujpeQucc2EakrQJ2UlxdTgLO6g95QUxReUG-E3e29HgBgAEdyYo8E43ujbOj4wVMlVKA" charset="UTF-8"></script><style>
         :root {
-            --height: 70vh;
+            --largura: 90%;
+            --botaoGerar: limegreen;
+            --botaoVoltar: crimson;
+            --botaoTabela: darkorange;
         }
         * {
             box-sizing: border-box;
-            font-family: 'Sora', 'Century Gothic Paneuropean', 'Roboto', 'Libre Franklin', sans-serif;
+            font-family: 'Century Gothic Paneuropean', 'Roboto', 'Libre Franklin', sans-serif;
             font-size: 15px;
-        }
-        body {
-            /* background-color: #e6ffe6; */
-            background-color: #ddd;
         }
         h1, h2, h3, h4, h5, h6 {
             font-weight: 500;
@@ -56,15 +49,16 @@
         .b {
             border: 1px solid red;
         }
-        .border {
-            border: 0px solid black;
-            border-radius: 20px;
-        }
         pre {
             white-space: pre-wrap; /* Para preservar espaços e quebras de linha */
         }
         code {
             font-family: monospace;
+            /* display: inline-block; */
+            /* padding: 8px; */
+            /* margin-left: 30px; */
+            /* background-color: khaki; */
+            /* border-radius: 0px; */
             white-space: pre;
         }
         sub, sup {
@@ -72,29 +66,11 @@
         }
         .margin {
             margin: 0 auto;
-            width: 95%;
+            width: var(--largura);
             display: flex;
             flex-direction: column;
-        }
-        header {
-            display: flex;
             justify-content: space-between;
-        }
-        main {
-            display: flex;
-            /* flex-direction: column; */
-            /* justify-content: space-between; */
-            /* min-height: 100vh; */
-            gap: 50px;
-            /* padding: 10px; */
-            min-height: var(--height);
-        }
-        footer {
-            padding-top: 50px;
-        }
-        .entry-data {
-            width: 100%;
-            flex-grow: 1;
+            min-height: 100vh;
         }
         .author {
             font-size: 14px;
@@ -102,12 +78,11 @@
         }
         #textInput {
             width: 100%;
-            height: var(--height);
-
-            padding: 20px;
+            height: 300px;
+            border-radius: 10px;
+            padding: 10px;
             font-size: 15px;
-            line-height: 1.5em;
-            resize: vertical;
+            border: 1px solid black;
         }
         .buttons {
             max-width: 100%;
@@ -123,6 +98,11 @@
             flex-wrap: wrap;
             gap: 5px;
         }
+        .buttons__functions button {
+            padding: 4px;
+            border-radius: 5px;
+            border: 0.5px solid black;
+        }
         .buttons__functions__tags, .buttons__functions__copy {
             display: flex;
             flex-wrap: wrap;
@@ -131,30 +111,22 @@
         .buttons__functions__tags button, .buttons__functions__copy button {
             cursor: pointer;
         }
-        .buttons__functions__tags {
-            display: none;
-        }
-        #copyTextButton, #copyHtmlButton, #generateButton, #shortcutsButton {
-            font-size: 16px;
+        #generateButton {
+            font-size: 18px;
             font-weight: bold;
             text-transform: uppercase;
-            padding: 12px 20px;
+            padding: 12px;
             color: white;
-            border-radius: 30px;
+            border-radius: 5px;
             outline: 0;
+            background-color: var(--botaoGerar);
+            border-color: var(--botaoGerar);
         }
-        #generateButton {
-            color: black;
-            background-color: limegreen;
-            border-color: limegreen;
-        }
-        #copyTextButton, #copyHtmlButton, #shortcutsButton {
+        #copyTextButton, #copyHtmlButton, #listaDeImagens {
             background-color: black;
-            border: 0.5px solid black;
-        }
-        #shortcutsButton {
-            background-color: grey;
-            border: 0.5px solid grey;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
         }
         .textos {
             margin: 30px 0 100px 0;
@@ -165,14 +137,11 @@
         }
         .textos__html {
             width: 100%;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            background-color: white;
-            margin-bottom: 30px;
-            line-height: 1.5em;
-            /* border: 1px solid black; */
-            /* border-radius: 10px; */
+            border: 1px solid black;
+            border-radius: 10px;
         }
         #htmlListaDeImagens {
             width: 100%;
@@ -241,178 +210,89 @@
             margin-inline-start: 40px;
             margin-inline-end: 40px;
         }
-        #iframe {
-        max-width: 100%;
-        width: 100%;
-        height: var(--height);
-        resize: vertical;
-        /* border-radius: 0; */
-        /* border: none; */
-        }
     </style>
 </head>
 <body>
 
     <div class="margin">
-        <header>
+        <div>
             <h1>Converte Mais</h1>
-            <p><a href="index-old.html">Link para versão 1.0</a></p>
-        </header>
-
-        <main>
-            <div class="entry-data">
-                
-                <textarea id="textInput" class="border" rows="10" cols="50" placeholder="1) Entre aqui o texto copiado&#10;&#10;2) Aplique os marcadores&#10;&#10;3) Clique em 'GERAR' (ctrl + enter) para converter&#10;&#10;4) Utilize os botões 'COPIAR TEXTO' ou 'COPIAR HTML'.">## Primeiros passos ## (p)
-
-Essa é uma ferramenta desenvolvida para te ajudar a converter conteúdos em .pdf para textos simples e html. A ferramenta utiliza marcações entre parênteses como, por exemplo, a letra "p" minúscula dentro de parênteses, que é o marcador de parágrafo. (p)
-
-#### Negrito, itálico e gerar conversão  #### (p)
-
-Para dar agilidade, utilize as teclas de atalho. Por exemplo, para atribuir negrito pressione "alt + x", para itálico use "alt + z". Essa é a aparência do texto em (st)negrito(st) e do texto em (em)itálico(em). Para ver como essas marcações funcionam clique no botão "GERAR" abaixo ou use o atalho "ctrl + enter". Role a tela para baixo e veja como os marcadores sumiram e converteram o texto em parágrafo e atribuiram os estilos negrito e itálico.(p)
-
-#### Listas  #### (p)
-
-Você pode criar listas não ordenadas usando "alt + d" na frente dos itens da lista:(p)
-
-(ul)para cada item;
-(ul)você deve colocar o marcador no início;
-(ul)a ferramenta converte automaticamente a primeira letra de itens de lista em maiúscula :)
-(ul)não esqueça de usar o marcador de parágrafo para encerrar a lista.(p)
-
-Para criar listas ordenadas use "alt + f":(p)
-
-(ol)fácil,
-(ol)rápido,
-(ol)prático!(p)
-
-#### Bloco de citação longa #### (p)
-
-Para criar uma citação longa use o atalho "alt + k":(p)
-
-(p)(block)(p)
-O bloco de texto já fica automaticamente recuado e com uma barra vertical do lado parágrafo para se destacar do restante do texto.(p)
-É possível também usar o marcador de parágrafo para criar outros parágrafos dentro do bloco de citação longa.
-(p)(/block)(p)
-
-#### Imagens  #### (p)
-
-É possível também adicionar uma imagem de algum endereço web. Basta usar o atalho "alt + i" e substituir o endereço da imagem pelo parâmetro "URL". Faça o teste abaixo:(p)
-
-Copie o endereço "https://converte-mais.vercel.app/amazonia.jpg" e substitua no código abaixo:(p) 
-
-(p) (img) URL | LEGENDA | FONTE | DESCRIÇÃO (p)
-
-Os outros parâmetros também podem ser substituidos. Faça o teste e substitua o parâmetro "LEGENDA" por um texto adequado ("Vista da floresta amazônica", por exemplo) e um texto que descreva a imagem para uma pessoa cega pelo parâmetro "DESCRIÇÃO".(p)
-
-
-                </textarea><br><br>
-
-                <div id="" class="buttons">
-                    <div class="buttons__functions">
-                        <div class="buttons__functions__tags">
-                            <button id="copyPButton" class="tooltip">Parágrafo
-                                <span class="tooltiptext">Alt + S</span>
-                            </button>
-                            <button id="copyUlButton" class="tooltip">UL
-                                <span class="tooltiptext">Alt + D</span>
-                            </button>
-                            <button id="copyOlButton" class="tooltip">OL
-                                <span class="tooltiptext">Alt + E</span>
-                            </button>
-                            <button id="copyBoldButton" class="tooltip">Negrito
-                                <span class="tooltiptext">Alt + X</span>
-                            </button>
-                            <button id="copyItalicButton" class="tooltip">Itálico
-                                <span class="tooltiptext">Alt + Z</span>
-                            </button>
-                            <button id="copyH4Button" class="tooltip">H4
-                                <span class="tooltiptext">Alt + 4</span>
-                            </button>
-                            <button id="copyH5Button" class="tooltip">H5
-                                <span class="tooltiptext">Alt + 5</span>
-                            </button>
-                            <button id="copyImgButton" class="tooltip">Imagem
-                                <span class="tooltiptext">Alt + I</span>
-                            </button>
-                            <button id="copyTableButton" class="tooltip">Tabela
-                                <span class="tooltiptext">Alt + B</span>
-                            </button>
-                            <button id="copyBlockquoteButton" class="tooltip">Blockquote
-                                <span class="tooltiptext">Alt + K</span>
-                            </button>
-                        </div>
-                        <div class="buttons__functions__copy">
-                            <button id="copyTextButton">COPIAR TEXTO</button>
-                            <button id="copyHtmlButton">COPIAR HTML</button>
-                            <button id="shortcutsButton">Atalhos</button>
-                        </div>
+            
+            <textarea id="textInput" rows="10" cols="50" placeholder="Use (p) para separar parágrafos, ** para negrito, * para itálico, (ul) para lista não ordenada, (ol) para lista ordenada"></textarea><br><br>
+            <div class="buttons">
+                <div class="buttons__functions">
+                    <div class="buttons__functions__tags">
+                        <button id="copyPButton" class="tooltip">Parágrafo
+                            <span class="tooltiptext">Alt + S</span>
+                        </button>
+                        <button id="copyUlButton" class="tooltip">UL
+                            <span class="tooltiptext">Alt + D</span>
+                        </button>
+                        <button id="copyOlButton" class="tooltip">OL
+                            <span class="tooltiptext">Alt + E</span>
+                        </button>
+                        <button id="copyBoldButton" class="tooltip">Negrito
+                            <span class="tooltiptext">Alt + X</span>
+                        </button>
+                        <button id="copyItalicButton" class="tooltip">Itálico
+                            <span class="tooltiptext">Alt + Z</span>
+                        </button>
+                        <button id="copyH4Button" class="tooltip">H4
+                            <span class="tooltiptext">Alt + 4</span>
+                        </button>
+                        <button id="copyH5Button" class="tooltip">H5
+                            <span class="tooltiptext">Alt + 5</span>
+                        </button>
+                        <button id="copyImgButton" class="tooltip">Imagem
+                            <span class="tooltiptext">Alt + I</span>
+                        </button>
+                        <button id="copyTableButton" class="tooltip">Tabela
+                            <span class="tooltiptext">Alt + B</span>
+                        </button>
+                        <button id="copyBlockquoteButton" class="tooltip">Blockquote
+                            <span class="tooltiptext">Alt + K</span>
+                        </button>
                     </div>
-                    <button id="generateButton" class="tooltip" onclick="generateText()">Gerar
-                        <span class="tooltiptext">Ctrl + Enter</span>
-                    </button>
+                    <div class="buttons__functions__copy">
+                        <button id="copyTextButton">COPIAR TEXTO</button>
+                        <button id="copyHtmlButton">COPIAR HTML</button>
+                        <!-- <button id="listaDeImagens">LISTA DE IMAGENS</button> -->
+                    </div>
                 </div>
-                
+                <button id="generateButton" class="tooltip" onclick="generateText()">Gerar
+                    <span class="tooltiptext">Ctrl + Enter</span>
+                </button>
+            </div>
+            
 
-                <div class="textos">
-                    <div class="textos__html border">
-                        <!-- <h4>TEXTO SEM FORMATAÇÃO</h4> -->
-                        <div id="htmlResultado"></div>
-                    </div>
-                    <div class="textos__html border">
-                        <h4>HTML</h4>
-                        <pre id="htmlCodigo" class="textos__html__gerado"></pre>
-                    </div>
-                    <div class="textos__html border">
-                        <h4>LISTA DE IMAGENS</h4>
-                        <div id="htmlListaDeImagens" class="textos__html__gerado">
-                        </div>
+            <div class="textos">
+                <div class="textos__html">
+                    <div id="htmlResultado"></div>
+                </div>
+                <div class="textos__html">
+                    <h3>HTML</h3>
+                    <pre id="htmlCodigo" class="textos__html__gerado"></pre>
+                </div>
+                <div class="textos__html">
+                    <h3>LISTA DE IMAGENS</h3>
+                    <div id="htmlListaDeImagens" class="textos__html__gerado">
+                        <!-- <img src="https://conteudo.imguol.com.br/c/esporte/c6/2024/10/09/dorival-junior-tecnico-da-selecao-em-coletiva-1728477101365_v2_300x225.jpg">
+                        
+                        <img src="https://conteudo.imguol.com.br/c/tab/f9/2024/10/08/tabata-amaral-1728425099340_v2_900x506.jpg">
+                    
+                        <img src="https://conteudo.imguol.com.br/c/parceiros/2b/2023/02/02/casa-da-mulher-brasileira-arquivo-midiamax-1675317631928_v2_450x337.jpg">
+                    
+                    
+                        <img src="https://capitalreset.uol.com.br/wp-content/plugins/seox-image-magick/imagick_convert.php?width=1368&height=769&format=.jpg&quality=91&imagick=uploads.capitalreset.com/wp-content/uploads/2023/10/Desmatamento-madeira-amazonia.jpg"> -->
                     </div>
                 </div>
             </div>
-
-            <div class="entry-data">
-                <iframe id="iframe" class="border"></iframe>
-                <input type="file" id="fileInput" accept=".pdf" />
-                <button onclick="carregarPdf()">Enviar</button>
-                <!-- <input type="text" id="urlInput" placeholder="Cole a URL do PDF aqui" style="width: 100%;" /> -->
-                <!-- <button onclick="salvarUrl()">Salvar URL</button>      -->
-            </div>
-        </main>
-
-        <footer>
-            <p class="author">Desenvolvido por Moa Schneider • Versão 2.0</p>
-        </footer>
-
-
-        
+        </div>
+        <p class="author">Desenvolvido por Moa Schneider • Versão 1.0</p>
     </div>
 
 
     <script>
-        // Função para carregar a URL do localStorage
-        function carregarPdf() {
-        const savedUrl = localStorage.getItem("pdfUrl");
-        if (savedUrl) {
-            document.getElementById("iframe").src = savedUrl;
-        }
-        }
-
-        // Evento para carregar o PDF do arquivo selecionado
-        document.getElementById("fileInput").addEventListener("change", function(event) {
-        const file = event.target.files[0];
-        // if (file && file.type === "application/pdf") {
-            const fileURL = URL.createObjectURL(file); // Cria uma URL temporária para o arquivo
-            const iframe = document.getElementById("iframe");
-            iframe.src = fileURL; // Define a URL como fonte do iframe
-        // } else {
-        //   alert("Por favor, selecione um arquivo PDF.");
-        // }
-        });
-
-        // Carregar automaticamente a URL salva ao iniciar a página
-        window.onload = carregarPdf;
-
-
         // Variáveis que recebem os diversos processamentos e que vão ser inseridas nas divs
         let htmlOutput = '';
         let htmlResultado = '';
@@ -1237,5 +1117,6 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
         }
 
     </script>
+<!-- versão 1.0 -->
 </body>
 </html>

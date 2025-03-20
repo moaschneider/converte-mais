@@ -9,16 +9,14 @@ MELHORIAS CONVERTE MAIS
 - Add: possibilidade de editar o html direto
 - Add: escape para tags html
 - Fix: <br> em títulos
-- Fix: <strong> e <em> em legenda de foto
 - Add: botão para mandar sugestão
 - Add: carregar o pdf a ser convertido dentro da ferramenta
 - Add: botão para converter bullets "•" ou "-" em (ul)
 - Add: botão "TEXTO PARA QUESTÕES" (sem fotos, sem referências)
-
 - Update: inserir âncoras nas palavras proibidas para que possa clicar e levar até o ponto onde deve ser feito a edição
 - Update: <table> inserir título (legenda?) de tabela
 - Add: textarea secundário para "fixar" as referências e o "material baseado em" 
-
+- Add: criar marcador para referências
 
 
 
@@ -87,6 +85,19 @@ FEITOOOOO:
 - Update: <img> imagens de marcação no formato png que são copiadas para o arquivo texto
 - Update: <table> desabilitei a solução para não quebrar frase dentro de célula de tabela (feito no dia 13/10) por conta da questão que é uma tag <span>
 
+03/01:
+- Update: (unidades de medida) add 'V', 'Hz', 'ms', 'A', 'Ω', 'kΩ', 'MΩ'
+
+06/01:
+- Add: (sub) adicionei funcionalidade de selecionar e inserir com atalho (alt + u)
+
+08/01:
+- Add: (img) adicionei inline tags e palavras destacadas em legenda e descrição de imagens
+- Clean: (img) separei o código de processamento de imagens em uma função
+
+20/03:
+- Subi a versão 2.0 mas meio capenga.
+
 
 
 VANTAGENS:
@@ -112,6 +123,55 @@ VANTAGENS:
 
 
 
+
+
+
+ #### Primeiros passos #### (p)
+
+Essa é uma ferramenta desenvolvida para te ajudar a converter conteúdos em .pdf para textos simples e html. A ferramenta utiliza marcações entre parênteses como, por exemplo, a letra "p" minúscula dentro de parênteses, que é o marcador de parágrafo. (p)
+
+Para dar agilidade, utilize as teclas de atalho. Por exemplo, para atribuir negrito pressione "alt + x", para itálico use "alt + z". Essa é a aparência do texto em (st)negrito(st) e do texto em (em)itálico(em). Para ver como essas marcações funcionam clique no botão "GERAR" abaixo ou use o atalho "ctrl + enter". Role a tela para baixo e veja como os marcadores sumiram e converteram o texto em parágrafo e atribuiram os estilos negrito e itálico.(p)
+
+TEXTO PARA SEU PRIMEIRO TESTE: 
+
+Atribua negrito em alguma (st)palavra(st) dessa frase. 
+E agora aplique itálico em algum trecho dessa frase. 
+Não esqueça de colocar o marcador de parágrafo depois do ponto final (o atalho é "alt + s").
+
+
+
+Você pode criar listas não ordenadas usando "alt + d" na frente dos itens da lista:(p)
+
+(ul)para cada item;
+(ul)você deve colocar o marcador no início;
+(ul)a ferramenta converte automaticamente a primeira letra de itens de lista em maiúscula :)
+(ul)não esqueça de usar o marcador de parágrafo para encerrar a lista.(p)
+
+Para criar listas ordenadas use "alt + f":(p)
+
+(ol)fácil,
+(ol)rápido,
+(ol)prático!(p)
+
+Para criar uma citação longa use o atalho "alt + k":(p)
+
+(p)(block)(p)
+O bloco de texto já fica automaticamente recuado e com uma barra vertical do lado parágrafo para se destacar do restante do texto.(p)
+É possível também usar o marcador de parágrafo para criar outros parágrafos dentro do bloco de citação longa.
+(p)(/block)(p)
+
+É possível também adicionar uma imagem de algum endereço web, basta usar o atalho "alt + i":
+
+(p) (img) URL | LEGENDA | FONTE | DESCRIÇÃO (p)
+
+Para incluir a foto de um endereço web é só substituir URL pelo endereço da foto:(p)
+
+(p) (img) https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Amazon_CIAT_%285%29.jpg/640px-Amazon_CIAT_%285%29.jpg | Vista aérea da floresta amazônica | FONTE | A imagem mostra uma vasta extensão de floresta tropical vista do alto, cobrindo o horizonte até onde a vista alcança. A paisagem é predominantemente verde, com densas árvores formando um tapete contínuo de vegetação. Há algumas áreas mais escuras devido às sombras das nuvens espalhadas pelo céu. O céu é parcialmente nublado, com nuvens brancas volumosas contrastando contra o azul. A imagem transmite uma sensação de imensidão e natureza intocada, representando a grandiosidade da floresta amazônica. (p)
+
+
+
+
+
 LISTA ATALHOS:
 (precode) - ALT + SHIFT + C
 (code) - ALT + C
@@ -133,7 +193,7 @@ substitui "1.", "1-", "1)" por (ol) - CTRL + ALT + F
 
 
 
-
+Funções e atalhos:&#10;&#10;Parágrafos - (p) - Alt + P&#10;Negrito - (st) - Alt + X&#10;Itálico - (em) - Alt + Z&#10;Título grande - #### - Alt + 4&#10;Título pequeno - ##### - Alt + 5&#10;Lista não ordenada - (ul) - Alt + D&#10;Lista ordenada - (ol) - Alt + F&#10;Citação longa - (blockquote) - Alt + K&#10;Tabela - (table) - Alt + B&#10;Imagem - (img) URL | LEGENDA | FONTE | DESCRIÇÃO (p) - Alt + I&#10;Linha horizontal - (linha) - Alt + L&#10;Subscrito - (sub)&#10;Sobrescrito - (sup)&#10;&#10;&#10;Copie o trecho abaixo, cole nessa janela e aperte o botão 'GERAR' para ver um exemplo de utilização da ferramenta:
 
 
 
