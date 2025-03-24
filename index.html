@@ -135,13 +135,13 @@
             display: none;
         }
         #copyTextButton, #copyHtmlButton, #generateButton, #shortcutsButton {
-            font-size: 16px;
+            font-size: 12px;
             font-weight: bold;
             text-transform: uppercase;
-            padding: 12px 20px;
+            padding: 8px 16px;
             color: white;
             border-radius: 30px;
-            outline: 0;
+            /* outline: 0; */
         }
         #generateButton {
             color: black;
@@ -763,10 +763,12 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             hr: {marcador: "(linha)", tecla: "l"},
             code: {marcador: "(code)", tecla: "c"},
             pre: {marcador: "(pre)", tecla: "p"},
-            precode: {marcador: "(precode)", tecla: "c"},
+            precode: {marcador: "(precode)", tecla: "ç"},
             br: {marcador: "(br)", tecla: "q"},
             th: {marcador: "(th)", tecla: "h"},
             thcentralizado: {marcador: "(th):", tecla: "j"},
+            sub: {marcador: "(sub)", tecla: "u"},
+            sup: {marcador: "(sup)", tecla: "y"},
             h1: {marcador: " # ", tecla: "1"},
             h2: {marcador: " ## ", tecla: "2"},
             h3: {marcador: " ### ", tecla: "3"},
@@ -915,13 +917,13 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             }
             
             // Atalho de lista não ordenada foi para junto do código para substituir bullets por seleção de texto (abaixo)
-            
-           
-            
-            if (event.altKey && event.shiftKey && event.key.toLowerCase() === atalhos["precode"]["tecla"]) {
+
+            if (event.altKey && event.key.toLowerCase() === atalhos["precode"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
                 insertTextAtCursor(atalhos["precode"]["marcador"]); // Insere o texto "(precode)"
-            } else if (event.altKey && event.key.toLowerCase() === atalhos["code"]["tecla"]) {
+            }
+            
+            if (event.altKey && event.key.toLowerCase() === atalhos["code"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
                 insertTextAtCursor(atalhos["code"]["marcador"]); // Insere o texto "(code)"
             }
@@ -954,6 +956,16 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             if (event.altKey && event.key.toLowerCase() === atalhos["strong"]["tecla"]) {
                 // event.preventDefault(); // Evita o comportamento padrão
                 insertTextAtCursor(atalhos["strong"]["marcador"]); // Insere o texto "(st)"
+            }
+
+            if (event.altKey && event.key.toLowerCase() === atalhos["sub"]["tecla"]) {
+                // event.preventDefault(); // Evita o comportamento padrão
+                insertTextAtCursor(atalhos["sub"]["marcador"]); // Insere o texto "(sub)"
+            }
+
+            if (event.altKey && event.key.toLowerCase() === atalhos["sup"]["tecla"]) {
+                // event.preventDefault(); // Evita o comportamento padrão
+                insertTextAtCursor(atalhos["sup"]["marcador"]); // Insere o texto "(sup)"
             }
 
             if (event.altKey && event.key.toLowerCase() === atalhos["em"]["tecla"]) {

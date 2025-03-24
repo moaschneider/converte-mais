@@ -98,6 +98,9 @@ FEITOOOOO:
 20/03:
 - Subi a versão 2.0 mas meio capenga.
 
+24/03:
+- Add: (sub), (sup), (precode) adicionei teclas de atalhos (alt + u, alt + y e alt + ç, respectivamente).
+
 
 
 VANTAGENS:
