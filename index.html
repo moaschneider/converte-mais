@@ -304,43 +304,13 @@ Copie o endereço "https://converte-mais.vercel.app/amazonia.jpg" e substitua no
 
 Os outros parâmetros também podem ser substituidos. Faça o teste e substitua o parâmetro "LEGENDA" por um texto adequado ("Vista da floresta amazônica", por exemplo) e um texto que descreva a imagem para uma pessoa cega pelo parâmetro "DESCRIÇÃO".(p)
 
+Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae laudantium voluptates tempora autem omnis praesentium, nam ducimus magnam asperiores. Reiciendis blanditiis tenetur amet similique ut numquam facilis voluptatum alias quae sequi velit dolor mollitia, quod asperiores delectus placeat corrupti voluptate libero reprehenderit quos ipsam odit maiores. Sint ratione perspiciatis consequatur voluptates recusandae, architecto impedit at, voluptatem sit inventore sunt pariatur eius esse quia qui aspernatur labore ipsam. Illo eaque excepturi laudantium quos debitis odit numquam alias necessitatibus, culpa quod quo? Excepturi recusandae aspernatur qui ipsa dolore porro iste! Amet, quisquam ipsa. Rerum aut perferendis veniam id libero minima quaerat magni!
+
 
                 </textarea><br><br>
 
                 <div id="" class="buttons">
                     <div class="buttons__functions">
-                        <div class="buttons__functions__tags">
-                            <button id="copyPButton" class="tooltip">Parágrafo
-                                <span class="tooltiptext">Alt + S</span>
-                            </button>
-                            <button id="copyUlButton" class="tooltip">UL
-                                <span class="tooltiptext">Alt + D</span>
-                            </button>
-                            <button id="copyOlButton" class="tooltip">OL
-                                <span class="tooltiptext">Alt + E</span>
-                            </button>
-                            <button id="copyBoldButton" class="tooltip">Negrito
-                                <span class="tooltiptext">Alt + X</span>
-                            </button>
-                            <button id="copyItalicButton" class="tooltip">Itálico
-                                <span class="tooltiptext">Alt + Z</span>
-                            </button>
-                            <button id="copyH4Button" class="tooltip">H4
-                                <span class="tooltiptext">Alt + 4</span>
-                            </button>
-                            <button id="copyH5Button" class="tooltip">H5
-                                <span class="tooltiptext">Alt + 5</span>
-                            </button>
-                            <button id="copyImgButton" class="tooltip">Imagem
-                                <span class="tooltiptext">Alt + I</span>
-                            </button>
-                            <button id="copyTableButton" class="tooltip">Tabela
-                                <span class="tooltiptext">Alt + B</span>
-                            </button>
-                            <button id="copyBlockquoteButton" class="tooltip">Blockquote
-                                <span class="tooltiptext">Alt + K</span>
-                            </button>
-                        </div>
                         <div class="buttons__functions__copy">
                             <button id="copyTextButton">COPIAR TEXTO</button>
                             <button id="copyHtmlButton">COPIAR HTML</button>
@@ -444,7 +414,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
 
         // Destacar palavras e letras "proibidas"
         const palavrasProibidas = ['alunos', 'aluno', 'aluna', 'alunas', '\\?'];
-        const unidadesMedida = ['ºC', 'kg', 'm2', 'mm', 'km', 'L', 'ml', 'm', 'g', 'º', 'cm'];
+        const unidadesMedida = ['ºC', 'kg', 'm2', 'mm', 'km', 'L', 'ml', 'm', 'g', 'cm', 'Ω', 'KΩ', 'MΩ', 'V', 'W', 'Hz'];
 
 
         function destacarPalavras(texto) {
@@ -457,8 +427,6 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                     const regex = new RegExp(`\\b(${palavra})\\b`, 'gi');
                     texto = texto.replace(regex, '<span style="color: red; font-weight: bold;">$1</span>');
                 }
-
-                
             });
             
             // Remove as barras invertidas que escapam os pontos de interrogação
@@ -472,27 +440,11 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             
 
 
-
-
-
-
-
             // Destaca palavras possivelmente quebradas com hífen
             texto = texto.replace(/(\w+[-][\s]+\w+)/gi, '<span style="color: red; font-weight: bold;">$1</span>');
 
             // Elimina hífen e une as duas partes de palavra quebrada por hifenização. Status: desabilitada, está funcionando, só tem que avaliar pra talvez colocar em um botão.
             // texto = texto.replace(/(\w+)[-][\s+](\w+)/gi, '$1$2');
-
-            // Regex para marcar palavras em caixa alta / uppercase / maiúsculas. Status: problema pra capturar acentos, avaliar se é necessário (em 31/10/24 me parece que não).
-            // texto = texto.replace(/(\S*[A-Z]{2,}\S*)/g, '<span style="color: red; font-weight: bold;">$1</span>');
-
-
-
-
-
-
-
-
 
             return texto;    
         }
@@ -508,14 +460,6 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
         function generateText() {
             
             let textInput = document.getElementById('textInput').value;
-            // console.log(textInput);
-            
-            // textInput = limpaTexto(textInput);
-
-            // let teste = textInput
-            // .replace(/[\r\n]+/g, ' ') // Remove quebras de linha
-            // .replace(/\s{2,}/g, ' ') // Remove espaços excessivos
-            // .trim(); // Remove espaços no início e no final
             
             // Divide o texto em parágrafos usando (p)
             const paragraphs = textInput.split('(p)').map(p => p.trim()).filter(p => p.length > 0);
@@ -530,7 +474,6 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
 
             // Mostra a div com os previews de texto e html
             document.querySelector('.textos').style.display = 'flex';
-
 
 
             const htmlOutputAjustado = removeEspacamentoDuplicado(htmlOutput);
@@ -558,22 +501,19 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             // Se for uma tag <pre>, pula a remoção de espaços
             if (paragraph.startsWith('(pre)')) {
                 const preContent = paragraph.replace('(pre)', ''); // Remove (pre) sem remover espaços
-                // console.log(preContent);
                 
                 // Simula o <pre> usando div com white-space
                     htmlOutput += `<div style="white-space: pre-wrap;">${converteInlineTags(preContent)}</div>\n\n`;
                     
             } else if (paragraph.startsWith('(precode)')) {
                 const precodeContent = paragraph.replace('(precode)', '');
-                htmlOutput += `<pre>\n<code>\n${converteInlineTags(precodeContent)}\n</code>\n</pre>\n\n`;
+                htmlOutput += `<pre>\n<code>${converteInlineTags(precodeContent)}</code>\n</pre>\n\n`;
             } else {
                 // Se não for <pre> remove quebras e espaços excessivos
                 paragraph = limpaTexto(paragraph);
-                // console.log(paragraph);
 
                 // Converte hashtags em títulos ou mantém como parágrafo
-                const convertedText = converteTitulos(paragraph);
-                // console.log(convertedText);    
+                const convertedText = converteTitulos(paragraph);  
                 
                 // Detecta uma tabela e processa
                 if (paragraph.startsWith('(table)') && paragraph.endsWith('(table)')) {
@@ -583,6 +523,21 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                     
                     htmlOutput += tableHtml + '\n\n';
                     
+
+                } else if (paragraph.startsWith('(box)')) {
+                    // Remove o marcador (box) sem remover espaços
+                    const boxContent = paragraph.replace('(box)', '').trim();
+                    
+                    // Envolve o conteúdo com a tag <div>
+                    htmlOutput += `<div style="margin-top: 15px; padding: 10px; border: 2px solid #dfdfdf; background-color:#f2f2f2">\n\n${boxContent}`;
+
+                } else if (paragraph.startsWith('(/box)')) {
+                    // Remove o marcador (/box) sem remover espaços
+                    const boxContent = paragraph.replace('(/box)', '').trim();
+                    
+                    // Envolve o conteúdo com a tag </div>
+                    htmlOutput += `${boxContent}</div>\n\n`;
+
 
                 } else if (paragraph.startsWith('(block)')) {
                     // Remove o marcador (block) sem remover espaços
@@ -668,17 +623,6 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                     // Palavras proibidas em legenda e descrição de fotos
                     const imgFigureCaptionDestacado = destacarPalavras(imgFigureCaption);
                     const imgDescriptionDestacado = destacarPalavras(imgDescription);
-
-
-
-                    // CÓDIGO ANTIGO, SEM POSSIBILIDADE DE INCLUIR FOTO VALENDO
-                    // htmlOutput += `<figure>\n`;
-                    // htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="https://placehold.co/500x300/32ab53/black?text=${imgFigureCaption || ''}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
-                    // htmlOutput += `\t<p style="text-align: center;">Figura ${autoFigureNumber} - ${imgFigureCaptionDestacado || '\n'}<br>\n\t\t<sub>Fonte: ${imgSource || ''}</sub>\n\t</p>\n`;
-                    // htmlOutput += `\t<p>\n\t\t<sub>Descrição da imagem: ${imgDescriptionDestacado || ''}</sub>\n\t</p>\n`;
-                    // htmlOutput += `</figure>\n\n`;
-                    // htmlOutput += `<p><br></p>\n\n`;
-
 
 
                     // CÓDIGO PARA ADICIONAR URL DA FOTO VALENDO
@@ -777,7 +721,8 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             h6: {marcador: " ###### ", tecla: "6"},
             img: {marcador: "\n(p) (img) URL | LEGENDA | FONTE | DESCRIÇÃO (p)\n", tecla: "i"},
             table: {marcador: "\n(p)(table)\n\n(table)(p)\n", tecla: "b", antes: "\n(p)(table)\n", depois: "\n(table)(p)\n"},
-            blockquote: {marcador: "\n(p)(block)(p)\n\n(p)(/block)(p)\n", tecla: "k", antes: "\n(p)(block)(p)\n", depois: "\n(p)(/block)(p)\n" },
+            blockquote: {marcador: "\n(p)(block)(p)\n\n(p)(/block)(p)\n", tecla: "k", antes: "\n(p)(block)(p)\n\n", depois: "\n(p)(/block)(p)\n" },
+            box: {marcador: "\n(p)(box)(p)\n\n(p)(/box)(p)\n\n", tecla: "o", antes: "\n(p)(box)(p)\n\n", depois: "\n\n(p)(/box)(p)\n" },
         }
 
         // ::: COPIAR PARA ÁREA DE TRANSFERÊNCIA :::
@@ -795,56 +740,6 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
         document.getElementById('copyHtmlButton').addEventListener('click', () => {
             const htmlContent = document.querySelector('#htmlCodigo').textContent;
             copyToClipboard(htmlContent);
-        });
-
-        // Add event listener for the new "(p)" button
-        document.getElementById('copyPButton').addEventListener('click', () => {
-            copyToClipboard(atalhos["p"]["marcador"]);
-        });
-
-        // Add event listener for the new "(ul)" button
-        document.getElementById('copyUlButton').addEventListener('click', () => {
-            copyToClipboard(atalhos["ul"]["marcador"]);
-        });
-
-        // Add event listener for the new "(ol)" button
-        document.getElementById('copyOlButton').addEventListener('click', () => {
-            copyToClipboard(atalhos["ol"]["marcador"]);
-        });
-
-        // Add event listener for the new bold button
-        document.getElementById('copyBoldButton').addEventListener('click', () => {
-            copyToClipboard(atalhos["strong"]["marcador"]);
-        });
-
-        // Add event listener for the new italic button
-        document.getElementById('copyItalicButton').addEventListener('click', () => {
-            copyToClipboard(atalhos["em"]["marcador"]);
-        });
-
-        // Add event listener for the new H4 button
-        document.getElementById('copyH4Button').addEventListener('click', () => {
-            copyToClipboard(atalhos["h4"]["marcador"]);
-        });
-
-        // Add event listener for the new H5 button
-        document.getElementById('copyH5Button').addEventListener('click', () => {
-            copyToClipboard(atalhos["h5"]["marcador"]);
-        });
-
-        // Add event listener for the new Image button
-        document.getElementById('copyImgButton').addEventListener('click', () => {
-            copyToClipboard(atalhos["img"]["marcador"]);
-        });
-
-        // Add event listener for the new Table button
-        document.getElementById('copyTableButton').addEventListener('click', () => {
-            copyToClipboard(atalhos["table"]["marcador"]);
-        });
-
-        // Event Listener para o botão de blockquote
-        document.getElementById('copyBlockquoteButton').addEventListener('click', () => {
-            copyToClipboard(atalhos["blockquote"]["marcador"]);
         });
 
 
@@ -920,7 +815,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
 
             if (event.altKey && event.key.toLowerCase() === atalhos["precode"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
-                insertTextAtCursor(atalhos["precode"]["marcador"]); // Insere o texto "(precode)"
+                insertTextAtCursor(atalhos["precode"]["marcador"] + '\n'); // Insere o texto "(precode)"
             }
             
             if (event.altKey && event.key.toLowerCase() === atalhos["code"]["tecla"]) {
@@ -1027,6 +922,25 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                 textarea.setRangeText(newText, start, end, 'end');
             }
 
+            if (event.altKey && event.key === atalhos["box"]["tecla"]) {
+                event.preventDefault(); // Evita o comportamento padrão
+                
+                // Pega a posição de início e fim da seleção de texto
+                let start = textarea.selectionStart;
+                let end = textarea.selectionEnd;
+                
+                // O texto selecionado
+                let selectedText = textarea.value.substring(start, end);
+                
+                // Adiciona os marcadores (box) antes e depois da seleção
+                let before = atalhos["box"]["antes"];
+                let after = atalhos["box"]["depois"];
+                let newText = before + selectedText + after;
+                
+                // Atualiza o conteúdo do textarea com os marcadores
+                textarea.setRangeText(newText, start, end, 'end');
+            } 
+
             if (event.altKey && event.key === atalhos["blockquote"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
                 
@@ -1037,7 +951,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                 // O texto selecionado
                 let selectedText = textarea.value.substring(start, end);
                 
-                // Adiciona os marcadores (p)(table) antes e depois da seleção
+                // Adiciona os marcadores (block) antes e depois da seleção
                 let before = atalhos["blockquote"]["antes"];
                 let after = atalhos["blockquote"]["depois"];
                 let newText = before + selectedText + after;
