@@ -303,10 +303,6 @@ Copie o endereço "https://converte-mais.vercel.app/amazonia.jpg" e substitua no
 (p) (img) URL | LEGENDA | FONTE | DESCRIÇÃO (p)
 
 Os outros parâmetros também podem ser substituidos. Faça o teste e substitua o parâmetro "LEGENDA" por um texto adequado ("Vista da floresta amazônica", por exemplo) e um texto que descreva a imagem para uma pessoa cega pelo parâmetro "DESCRIÇÃO".(p)
-
-Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae laudantium voluptates tempora autem omnis praesentium, nam ducimus magnam asperiores. Reiciendis blanditiis tenetur amet similique ut numquam facilis voluptatum alias quae sequi velit dolor mollitia, quod asperiores delectus placeat corrupti voluptate libero reprehenderit quos ipsam odit maiores. Sint ratione perspiciatis consequatur voluptates recusandae, architecto impedit at, voluptatem sit inventore sunt pariatur eius esse quia qui aspernatur labore ipsam. Illo eaque excepturi laudantium quos debitis odit numquam alias necessitatibus, culpa quod quo? Excepturi recusandae aspernatur qui ipsa dolore porro iste! Amet, quisquam ipsa. Rerum aut perferendis veniam id libero minima quaerat magni!
-
-
                 </textarea><br><br>
 
                 <div id="" class="buttons">
@@ -529,7 +525,7 @@ Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae laudantium volupt
                     const boxContent = paragraph.replace('(box)', '').trim();
                     
                     // Envolve o conteúdo com a tag <div>
-                    htmlOutput += `<div style="margin-top: 15px; padding: 10px; border: 2px solid #dfdfdf; background-color:#f2f2f2">\n\n${boxContent}`;
+                    htmlOutput += `<div style="margin-top: 15px; padding: 10px; border: 2px solid #dfdfdf; background-color:#f2f2f2">\n\n\t${boxContent}`;
 
                 } else if (paragraph.startsWith('(/box)')) {
                     // Remove o marcador (/box) sem remover espaços
@@ -645,6 +641,11 @@ Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae laudantium volupt
                     htmlOutput += `</figure>\n\n`;
                     htmlOutput += `<p><br></p>\n\n`;
 
+                } else if (paragraph.startsWith('(pcent)')){
+                    const paragraphCentralized = paragraph.replace('(pcent)', '').trim();
+
+                    htmlOutput += `<p style="text-align: center">${converteInlineTags(paragraphCentralized)}</p>\n\n`;
+                
                 } else {
 
                     // Adiciona o texto convertido no HTML
@@ -721,7 +722,7 @@ Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae laudantium volupt
             h6: {marcador: " ###### ", tecla: "6"},
             img: {marcador: "\n(p) (img) URL | LEGENDA | FONTE | DESCRIÇÃO (p)\n", tecla: "i"},
             table: {marcador: "\n(p)(table)\n\n(table)(p)\n", tecla: "b", antes: "\n(p)(table)\n", depois: "\n(table)(p)\n"},
-            blockquote: {marcador: "\n(p)(block)(p)\n\n(p)(/block)(p)\n", tecla: "k", antes: "\n(p)(block)(p)\n\n", depois: "\n(p)(/block)(p)\n" },
+            blockquote: {marcador: "\n(p)(block)(p)\n\n(p)(/block)(p)\n", tecla: "k", antes: "\n(p)(block)(p)\n\n", depois: "\n\n(p)(/block)(p)\n" },
             box: {marcador: "\n(p)(box)(p)\n\n(p)(/box)(p)\n\n", tecla: "o", antes: "\n(p)(box)(p)\n\n", depois: "\n\n(p)(/box)(p)\n" },
         }
 
@@ -770,7 +771,7 @@ Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae laudantium volupt
 
         const textarea = document.getElementById('textInput');
 
-        // Função para inserir o texto "(p)" na posição atual do cursor
+        // Função para inserir o marcador na posição atual do cursor
         function insertTextAtCursor(text) {
             const startPos = textarea.selectionStart;
             const endPos = textarea.selectionEnd;
