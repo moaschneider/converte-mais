@@ -249,6 +249,22 @@
         /* border-radius: 0; */
         /* border: none; */
         }
+
+        @media screen and (max-width: 900px){
+            main {
+                display: block;
+                /* display: flex; */
+                /* flex-direction: column; */
+                /* justify-content: space-between; */
+                /* min-height: 100vh; */
+                /* gap: 50px; */
+                /* padding: 10px; */
+                min-height: var(--height);
+            }
+            #entry-data-pdf {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -260,7 +276,7 @@
         </header>
 
         <main>
-            <div class="entry-data">
+            <div class="entry-data" id="entry-data-content">
                 
                 <textarea id="textInput" class="border" rows="10" cols="50" placeholder="1) Entre aqui o texto copiado&#10;&#10;2) Aplique os marcadores&#10;&#10;3) Clique em 'GERAR' (ctrl + enter) para converter&#10;&#10;4) Utilize os botões 'COPIAR TEXTO' ou 'COPIAR HTML'.">## Primeiros passos ## (p)
 
@@ -336,7 +352,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                 </div>
             </div>
 
-            <div class="entry-data">
+            <div class="entry-data" id="entry-data-pdf">
                 <iframe id="iframe" class="border"></iframe>
                 <input type="file" id="fileInput" accept=".pdf" />
                 <button onclick="carregarPdf()">Enviar</button>
