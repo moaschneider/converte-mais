@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -265,6 +264,67 @@
                 display: none;
             }
         }
+
+        .pdf-controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .file-input {
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+            background-color: black;
+            border: 0.5px solid black;
+            border-radius: 30px;
+            padding: 8px 16px;
+            cursor: pointer;
+            width: 300px; /* Largura fixa para o input */
+            position: relative;
+            overflow: hidden; /* Previne que o conteúdo vaze */
+        }
+
+        .file-input::-webkit-file-upload-button {
+            display: none;
+        }
+
+        /* Esconde o texto padrão do input */
+        .file-input {
+            color: transparent; /* Torna o texto do input transparente */
+        }
+
+        .file-input::before {
+            content: 'SELECIONAR PDF';
+            display: inline-block;
+            cursor: pointer;
+            color: white;
+            position: absolute;
+            left: 16px; /* Alinha com o padding do input */
+            white-space: nowrap; /* Previne quebra de linha */
+            overflow: hidden; /* Esconde o excesso */
+            text-overflow: ellipsis; /* Adiciona reticências */
+            right: 16px; /* Limita a largura considerando o padding */
+        }
+
+        .file-input.file-selected::before {
+            content: attr(data-file-name);
+        }
+
+        .pdf-button {
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+            background-color: black;
+            border: 0.5px solid black;
+            border-radius: 30px;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -354,10 +414,9 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
 
             <div class="entry-data" id="entry-data-pdf">
                 <iframe id="iframe" class="border"></iframe>
-                <input type="file" id="fileInput" accept=".pdf" />
-                <button onclick="carregarPdf()">Enviar</button>
-                <!-- <input type="text" id="urlInput" placeholder="Cole a URL do PDF aqui" style="width: 100%;" /> -->
-                <!-- <button onclick="salvarUrl()">Salvar URL</button>      -->
+                <div class="pdf-controls">
+                    <input type="file" id="fileInput" accept=".pdf" class="file-input" onchange="handleFileSelect(this)" />
+                </div>
             </div>
         </main>
 
@@ -373,10 +432,15 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
     <script>
         // Função para carregar a URL do localStorage
         function carregarPdf() {
-        const savedUrl = localStorage.getItem("pdfUrl");
-        if (savedUrl) {
-            document.getElementById("iframe").src = savedUrl;
-        }
+            const input = document.getElementById('fileInput');
+            if (input.files && input.files[0]) {
+                const fileURL = URL.createObjectURL(input.files[0]);
+                const iframe = document.getElementById('iframe');
+                iframe.src = fileURL;
+                
+                // Atualiza o texto do botão para mostrar o nome do arquivo
+                input.setAttribute('data-file-name', input.files[0].name.toUpperCase());
+            }
         }
 
         // Evento para carregar o PDF do arquivo selecionado
@@ -1177,6 +1241,13 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             });
 
             return html;
+        }
+
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                input.classList.add('file-selected');
+                carregarPdf();
+            }
         }
 
     </script>
