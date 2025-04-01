@@ -17,7 +17,8 @@ MELHORIAS CONVERTE MAIS
 - Update: <table> inserir título (legenda?) de tabela
 - Add: textarea secundário para "fixar" as referências e o "material baseado em" 
 - Add: criar marcador para referências
-
+- Add: criar marcador genérico, para questões que devem ser resolvidas depois
+- Add: marcador para numeração automática de tabelas e quadros
 
 
 

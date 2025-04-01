@@ -368,7 +368,7 @@ O bloco de texto já fica automaticamente recuado e com uma barra vertical do la
 
 Copie o endereço "https://converte-mais.vercel.app/amazonia.jpg" e substitua no código abaixo:(p) 
 
-(img | URL | LEGENDA | FONTE | DESCRIÇÃO)(p)
+(p) (img) URL | LEGENDA | FONTE | DESCRIÇÃO (p)
 
 Os outros parâmetros também podem ser substituidos. Faça o teste e substitua o parâmetro "LEGENDA" por um texto adequado ("Vista da floresta amazônica", por exemplo) e um texto que descreva a imagem para uma pessoa cega pelo parâmetro "DESCRIÇÃO".(p)
                 </textarea><br><br>
@@ -680,9 +680,9 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                         htmlOutput += '<ol>\n' + listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
                     }
 
-                } else if (paragraph.startsWith('(img |')) {
+                } else if (paragraph.startsWith('(img)')) {
                     // Processa figure e insere imagem de marcação
-                    const imgContent = paragraph.replace('(img |', '').replace(')', '').trim();
+                    const imgContent = paragraph.replace('(img)', '').trim();
 
                     const autoFigureNumber = photoNumber++;
 
@@ -691,6 +691,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                     // Palavras proibidas em legenda e descrição de fotos
                     const imgFigureCaptionDestacado = destacarPalavras(imgFigureCaption);
                     const imgDescriptionDestacado = destacarPalavras(imgDescription);
+
 
                     // CÓDIGO PARA ADICIONAR URL DA FOTO VALENDO
                     htmlOutput += `<figure>\n`;
@@ -791,7 +792,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             h4: {marcador: " #### ", tecla: "4"},
             h5: {marcador: " ##### ", tecla: "5"},
             h6: {marcador: " ###### ", tecla: "6"},
-            img: {marcador: "\n(img | URL | LEGENDA | FONTE | DESCRIÇÃO)(p)\n", tecla: "i"},
+            img: {marcador: "\n(p) (img) URL | LEGENDA | FONTE | DESCRIÇÃO (p)\n", tecla: "i"},
             table: {marcador: "\n(p)(table)\n\n(table)(p)\n", tecla: "b", antes: "\n(p)(table)\n", depois: "\n(table)(p)\n"},
             blockquote: {marcador: "\n(p)(block)(p)\n\n(p)(/block)(p)\n", tecla: "k", antes: "\n(p)(block)(p)\n\n", depois: "\n\n(p)(/block)(p)\n" },
             box: {marcador: "\n(p)(box)(p)\n\n(p)(/box)(p)\n\n", tecla: "o", antes: "\n(p)(box)(p)\n\n", depois: "\n\n(p)(/box)(p)\n" },
