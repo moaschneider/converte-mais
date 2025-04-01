@@ -317,6 +317,10 @@
             padding: 8px 16px;
             cursor: pointer;
         }
+
+        #referencias {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -368,7 +372,7 @@ O bloco de texto já fica automaticamente recuado e com uma barra vertical do la
 
 Copie o endereço "https://converte-mais.vercel.app/amazonia.jpg" e substitua no código abaixo:(p) 
 
-(p) (img) URL | LEGENDA | FONTE | DESCRIÇÃO (p)
+(img | URL | LEGENDA | FONTE | DESCRIÇÃO)(p)
 
 Os outros parâmetros também podem ser substituidos. Faça o teste e substitua o parâmetro "LEGENDA" por um texto adequado ("Vista da floresta amazônica", por exemplo) e um texto que descreva a imagem para uma pessoa cega pelo parâmetro "DESCRIÇÃO".(p)
                 </textarea><br><br>
@@ -391,6 +395,11 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                     <div class="textos__html border">
                         <!-- <h4>TEXTO SEM FORMATAÇÃO</h4> -->
                         <div id="htmlResultado"></div>
+                    </div>
+                    <div class="textos__html border" id="referencias">
+                        <h4>REFERÊNCIAS</h4>
+                        <div id="htmlReferencias" class="textos__html__gerado">
+                        </div>
                     </div>
                     <div class="textos__html border">
                         <h4>HTML</h4>
@@ -463,7 +472,6 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
 
         // ::: PROCESSA BOLD E ITÁLICO :::
         function converteInlineTags(text) {
-
             text = text.replace(/\(st\)(.*?)\(st\)/g, '<strong>$1</strong>'); // Negrito com (st)
             text = text.replace(/\(em\)(.*?)\(em\)/g, '<em>$1</em>'); // Negrito com (em)
             text = text.replace(/\(sup\)(.*?)\(sup\)/g, '<sup>$1</sup>'); // Superescrito com (sup)
@@ -476,6 +484,35 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             // text = text.replace(/\(pre\)(.*?)\(pre\)/g, '<span style="white-space: nowrap;">$1</span>'); // Insere tag <pre>
 
             text = destacarPalavras(text);
+
+            // Add ref markup handling
+            text = text.replace(/\(ref\)(.*?)\(ref\)/g, (match, content) => {
+                // Add the reference to the references div
+                const refDiv = document.getElementById('htmlReferencias');
+                if (!refDiv.querySelector('ul')) {
+                    refDiv.innerHTML = '<ul></ul>';
+                }
+                const ul = refDiv.querySelector('ul');
+                
+                // Check if this reference already exists
+                const existingRefs = Array.from(ul.querySelectorAll('li')).map(li => li.textContent.trim());
+                if (!existingRefs.includes(content.trim())) {
+                    const li = document.createElement('li');
+                    li.textContent = content.trim();
+                    ul.appendChild(li);
+                    
+                    // Show the references div
+                    document.getElementById('referencias').style.display = 'flex';
+                }
+                
+                // Sort the list items alphabetically
+                const items = Array.from(ul.children);
+                items.sort((a, b) => a.textContent.localeCompare(b.textContent));
+                items.forEach(item => ul.appendChild(item));
+                
+                // Return the content without the markers
+                return content.trim();
+            });
 
             return text;
         }
@@ -680,9 +717,9 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                         htmlOutput += '<ol>\n' + listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
                     }
 
-                } else if (paragraph.startsWith('(img)')) {
+                } else if (paragraph.startsWith('(img |')) {
                     // Processa figure e insere imagem de marcação
-                    const imgContent = paragraph.replace('(img)', '').trim();
+                    const imgContent = paragraph.replace('(img |', '').replace(')', '').trim();
 
                     const autoFigureNumber = photoNumber++;
 
@@ -691,7 +728,6 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                     // Palavras proibidas em legenda e descrição de fotos
                     const imgFigureCaptionDestacado = destacarPalavras(imgFigureCaption);
                     const imgDescriptionDestacado = destacarPalavras(imgDescription);
-
 
                     // CÓDIGO PARA ADICIONAR URL DA FOTO VALENDO
                     htmlOutput += `<figure>\n`;
@@ -792,10 +828,11 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             h4: {marcador: " #### ", tecla: "4"},
             h5: {marcador: " ##### ", tecla: "5"},
             h6: {marcador: " ###### ", tecla: "6"},
-            img: {marcador: "\n(p) (img) URL | LEGENDA | FONTE | DESCRIÇÃO (p)\n", tecla: "i"},
+            img: {marcador: "\n(img | URL | LEGENDA | FONTE | DESCRIÇÃO)(p)\n", tecla: "i"},
             table: {marcador: "\n(p)(table)\n\n(table)(p)\n", tecla: "b", antes: "\n(p)(table)\n", depois: "\n(table)(p)\n"},
             blockquote: {marcador: "\n(p)(block)(p)\n\n(p)(/block)(p)\n", tecla: "k", antes: "\n(p)(block)(p)\n\n", depois: "\n\n(p)(/block)(p)\n" },
             box: {marcador: "\n(p)(box)(p)\n\n(p)(/box)(p)\n\n", tecla: "o", antes: "\n(p)(box)(p)\n\n", depois: "\n\n(p)(/box)(p)\n" },
+            ref: {marcador: "(ref)", tecla: "r"},
         }
 
         // ::: COPIAR PARA ÁREA DE TRANSFERÊNCIA :::
@@ -1081,6 +1118,11 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             } else if (event.altKey && event.key.toLowerCase() === atalhos["ol"]["tecla"]) {
                 event.preventDefault(); // Evita o comportamento padrão
                 insertTextAtCursor(atalhos["ol"]["marcador"]); // Insere o texto "(ol)"
+            }
+
+            if (event.altKey && event.key.toLowerCase() === atalhos["ref"]["tecla"]) {
+                event.preventDefault();
+                insertTextAtCursor(atalhos["ref"]["marcador"]);
             }
         });
 
