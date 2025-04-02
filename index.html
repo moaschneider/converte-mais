@@ -317,10 +317,6 @@
             padding: 8px 16px;
             cursor: pointer;
         }
-
-        #referencias {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -380,8 +376,8 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                 <div id="" class="buttons">
                     <div class="buttons__functions">
                         <div class="buttons__functions__copy">
-                            <button id="copyTextButton">COPIAR TEXTO</button>
-                            <button id="copyHtmlButton">COPIAR HTML</button>
+                            <button id="copyTextButton">Copiar Texto</button>
+                            <button id="copyHtmlButton">Copiar HTML</button>
                             <button id="shortcutsButton">Atalhos</button>
                         </div>
                     </div>
@@ -396,9 +392,9 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                         <!-- <h4>TEXTO SEM FORMATAÇÃO</h4> -->
                         <div id="htmlResultado"></div>
                     </div>
-                    <div class="textos__html border" id="referencias">
+                    <div class="textos__html border" id="referenciasContainer" style="display: none;">
                         <h4>REFERÊNCIAS</h4>
-                        <div id="htmlReferencias" class="textos__html__gerado">
+                        <div id="referencias" class="textos__html__gerado">
                         </div>
                     </div>
                     <div class="textos__html border">
@@ -464,6 +460,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
         let htmlOutput = '';
         let htmlResultado = '';
         let htmlListaDeImagens = '';
+        let references = [];
 
         // Nomes das divs onde entra o html código e o html resultante
         const htmlCodigoDiv = document.getElementById('htmlCodigo');
@@ -472,6 +469,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
 
         // ::: PROCESSA BOLD E ITÁLICO :::
         function converteInlineTags(text) {
+
             text = text.replace(/\(st\)(.*?)\(st\)/g, '<strong>$1</strong>'); // Negrito com (st)
             text = text.replace(/\(em\)(.*?)\(em\)/g, '<em>$1</em>'); // Negrito com (em)
             text = text.replace(/\(sup\)(.*?)\(sup\)/g, '<sup>$1</sup>'); // Superescrito com (sup)
@@ -479,40 +477,26 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             text = text.replace(/\(code\)(.*?)\(code\)/g, '<code>$1</code>'); // Code com (code)
             text = text.replace(/\(br\)/g, '<br>'); // Insere quebra de linha <br>
 
+            // Process references
+            if (text.includes('(ref [')) {
+                const refMatches = text.match(/\(ref \[(.*?)\]\)/g);
+                if (refMatches) {
+                    refMatches.forEach(match => {
+                        const refText = match.replace('(ref [', '').replace('])', '');
+                        if (!references.includes(refText)) {
+                            references.push(refText);
+                        }
+                        text = text.replace(match, refText);
+                    });
+                }
+            }      
+
+
             // DESABILITADA POR QUESTÃO DO <SPAN> MAS FUNCIONANDO
             // Solução para não evitar quebrar frases pequenas dentro de células de tabela
             // text = text.replace(/\(pre\)(.*?)\(pre\)/g, '<span style="white-space: nowrap;">$1</span>'); // Insere tag <pre>
 
             text = destacarPalavras(text);
-
-            // Add ref markup handling
-            text = text.replace(/\(ref\)(.*?)\(ref\)/g, (match, content) => {
-                // Add the reference to the references div
-                const refDiv = document.getElementById('htmlReferencias');
-                if (!refDiv.querySelector('ul')) {
-                    refDiv.innerHTML = '<ul></ul>';
-                }
-                const ul = refDiv.querySelector('ul');
-                
-                // Check if this reference already exists
-                const existingRefs = Array.from(ul.querySelectorAll('li')).map(li => li.textContent.trim());
-                if (!existingRefs.includes(content.trim())) {
-                    const li = document.createElement('li');
-                    li.textContent = content.trim();
-                    ul.appendChild(li);
-                    
-                    // Show the references div
-                    document.getElementById('referencias').style.display = 'flex';
-                }
-                
-                // Sort the list items alphabetically
-                const items = Array.from(ul.children);
-                items.sort((a, b) => a.textContent.localeCompare(b.textContent));
-                items.forEach(item => ul.appendChild(item));
-                
-                // Return the content without the markers
-                return content.trim();
-            });
 
             return text;
         }
@@ -566,9 +550,11 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             
             let textInput = document.getElementById('textInput').value;
             
+            // Reset references array at the start of each generation
+            references = [];
+            
             // Divide o texto em parágrafos usando (p)
             const paragraphs = textInput.split('(p)').map(p => p.trim()).filter(p => p.length > 0);
-            // console.log(paragraphs);
             
             // Variáveis que recebem os diversos processamentos ao longo do script e que vão ser inseridas nas divs
             htmlOutput = '';
@@ -580,12 +566,25 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             // Mostra a div com os previews de texto e html
             document.querySelector('.textos').style.display = 'flex';
 
-
             const htmlOutputAjustado = removeEspacamentoDuplicado(htmlOutput);
             
             htmlCodigoDiv.textContent = htmlOutputAjustado;
             htmlResultadoDiv.innerHTML = htmlOutputAjustado;
             htmlListaDeImagensDiv.innerHTML = htmlListaDeImagens;
+
+            // Add references to the references div
+            const referenciasContainer = document.getElementById('referenciasContainer');
+            if (references.length > 0) {
+                const referenciasDiv = document.getElementById('referencias');
+                // Sort references alphabetically
+                const sortedReferences = references.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+                referenciasDiv.innerHTML = '<ul>\n' + 
+                    sortedReferences.map(ref => `\t<li>${ref}</li>`).join('\n') + 
+                    '\n</ul>';
+                referenciasContainer.style.display = 'block';
+            } else {
+                referenciasContainer.style.display = 'none';
+            }
         }
 
         function removeEspacamentoDuplicado(html) {
@@ -601,6 +600,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
         function processarParagrafos(paragraphs) {
             let photoNumber = 1;
             let contador = 1;
+            
             paragraphs.forEach(paragraph => {
 
             // Se for uma tag <pre>, pula a remoção de espaços
@@ -672,6 +672,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                     // Insere a tag <hr>
                     htmlOutput += `<hr>\n\n`;
 
+
                 } else if (paragraph.startsWith('(ul)')) {
 
                     const listItems = paragraph.split('(ul)').map(item => item.trim()).filter(item => item.length > 0);
@@ -719,11 +720,15 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
 
                 } else if (paragraph.startsWith('(img |')) {
                     // Processa figure e insere imagem de marcação
-                    const imgContent = paragraph.replace('(img |', '').replace(')', '').trim();
-
+                    const imgContent = paragraph.replace('(img |', '').replace(/\)$/, '').trim();
                     const autoFigureNumber = photoNumber++;
 
-                    const [imgUrl, imgFigureCaption, imgSource, imgDescription] = imgContent.split('|').map(item => item.trim());
+                    // Split by | but preserve parentheses in the content
+                    const parts = imgContent.split('|').map(item => item.trim());
+                    const imgUrl = parts[0];
+                    const imgFigureCaption = parts[1];
+                    const imgSource = parts[2];
+                    const imgDescription = parts[3];
 
                     // Palavras proibidas em legenda e descrição de fotos
                     const imgFigureCaptionDestacado = destacarPalavras(imgFigureCaption);
@@ -760,7 +765,17 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                     htmlOutput += convertedText + '\n\n';
                 }
             }
-            });
+        });
+            
+            // Add references to the references div
+            if (references.length > 0) {
+                const referenciasDiv = document.getElementById('referencias');
+                // Sort references alphabetically
+                const sortedReferences = references.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+                referenciasDiv.innerHTML = '<ul>\n' + 
+                    sortedReferences.map(ref => `\t<li>${ref}</li>`).join('\n') + 
+                    '\n</ul>';
+            }
         }
 
         // FUNÇÃO PARA COPIAR A IMAGEM CORRETA PARA A ÁREA DE TRANSFERÊNCIA
@@ -832,7 +847,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
             table: {marcador: "\n(p)(table)\n\n(table)(p)\n", tecla: "b", antes: "\n(p)(table)\n", depois: "\n(table)(p)\n"},
             blockquote: {marcador: "\n(p)(block)(p)\n\n(p)(/block)(p)\n", tecla: "k", antes: "\n(p)(block)(p)\n\n", depois: "\n\n(p)(/block)(p)\n" },
             box: {marcador: "\n(p)(box)(p)\n\n(p)(/box)(p)\n\n", tecla: "o", antes: "\n(p)(box)(p)\n\n", depois: "\n\n(p)(/box)(p)\n" },
-            ref: {marcador: "(ref)", tecla: "r"},
+            ref: {marcador: "(ref [ ] )", tecla: "r", antes: "(ref [", depois: "])"},
         }
 
         // ::: COPIAR PARA ÁREA DE TRANSFERÊNCIA :::
@@ -1122,7 +1137,20 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
 
             if (event.altKey && event.key.toLowerCase() === atalhos["ref"]["tecla"]) {
                 event.preventDefault();
-                insertTextAtCursor(atalhos["ref"]["marcador"]);
+                
+                // Get the selected text
+                let start = textarea.selectionStart;
+                let end = textarea.selectionEnd;
+                let selectedText = textarea.value.substring(start, end);
+                
+                if (selectedText) {
+                    // If text is selected, wrap it in the reference markup
+                    let newText = `(ref [${selectedText}])`;
+                    textarea.setRangeText(newText, start, end, 'end');
+                } else {
+                    // If no text is selected, insert the empty reference markup
+                    insertTextAtCursor(atalhos["ref"]["marcador"]);
+                }
             }
         });
 
