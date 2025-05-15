@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    
     <title>Converte Mais 2.0</title>
 
     <!-- Sora -->
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
+
+    <!-- Space Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
     <!-- Libre Franklin -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -39,6 +39,49 @@
         }
         h1 {
             font-size: 27px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+        header h1 {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-style: italic;
+            font-size: 38px;
+            letter-spacing: -1px;
+            margin: 0;
+            padding-bottom: 0;
+            line-height: 1;
+        }
+        header p {
+            margin: 0;
+            align-self: flex-end;
+            padding-bottom: 5px;
+        }
+        header div {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        header div p {
+            margin: 0;
+            padding: 0;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+        }
+        header a:visited {
+            color: #555;
+        }
+        header a {
+            text-decoration: none;
+            color: #333;
+        }
+        header a:hover {
+            text-decoration: underline;
         }
         h2 {
             font-size: 23px;
@@ -78,17 +121,9 @@
             display: flex;
             flex-direction: column;
         }
-        header {
-            display: flex;
-            justify-content: space-between;
-        }
         main {
             display: flex;
-            /* flex-direction: column; */
-            /* justify-content: space-between; */
-            /* min-height: 100vh; */
             gap: 50px;
-            /* padding: 10px; */
             min-height: var(--height);
         }
         footer {
@@ -105,11 +140,11 @@
         #textInput {
             width: 100%;
             height: var(--height);
-
             padding: 20px;
             font-size: 15px;
             line-height: 1.5em;
             resize: vertical;
+            border-radius: 20px;
         }
         .buttons {
             max-width: 100%;
@@ -173,8 +208,6 @@
             background-color: white;
             margin-bottom: 30px;
             line-height: 1.5em;
-            /* border: 1px solid black; */
-            /* border-radius: 10px; */
         }
         #htmlListaDeImagens {
             width: 100%;
@@ -248,19 +281,11 @@
         width: 100%;
         height: var(--height);
         resize: vertical;
-        /* border-radius: 0; */
-        /* border: none; */
         }
 
-        @media screen and (max-width: 900px){
+        @media screen and (max-width: 970px){
             main {
                 display: block;
-                /* display: flex; */
-                /* flex-direction: column; */
-                /* justify-content: space-between; */
-                /* min-height: 100vh; */
-                /* gap: 50px; */
-                /* padding: 10px; */
                 min-height: var(--height);
             }
             #entry-data-pdf {
@@ -327,53 +352,16 @@
     <div class="margin">
         <header>
             <h1>Converte Mais</h1>
-            <p><a href="index-old.html">Link para versão 1.0</a></p>
+            <div>
+                <p><a href="#">Aprenda como usar</a></p>
+                <p><a href="index-old.html">Versão 1.0</a></p>
+            </div>
         </header>
 
         <main>
             <div class="entry-data" id="entry-data-content">
                 
-                <textarea id="textInput" class="border" rows="10" cols="50" placeholder="1) Entre aqui o texto copiado&#10;&#10;2) Aplique os marcadores&#10;&#10;3) Clique em 'GERAR' (ctrl + enter) para converter&#10;&#10;4) Utilize os botões 'COPIAR TEXTO' ou 'COPIAR HTML'.">## Primeiros passos ## (p)
-
-Essa é uma ferramenta desenvolvida para te ajudar a converter conteúdos em .pdf para textos simples e html. A ferramenta utiliza marcações entre parênteses como, por exemplo, a letra "p" minúscula dentro de parênteses, que é o marcador de parágrafo. (p)
-
-#### Negrito, itálico e gerar conversão  #### (p)
-
-Para dar agilidade, utilize as teclas de atalho. Por exemplo, para atribuir negrito pressione "alt + x", para itálico use "alt + z". Essa é a aparência do texto em (st)negrito(st) e do texto em (em)itálico(em). Para ver como essas marcações funcionam clique no botão "GERAR" abaixo ou use o atalho "ctrl + enter". Role a tela para baixo e veja como os marcadores sumiram e converteram o texto em parágrafo e atribuiram os estilos negrito e itálico.(p)
-
-#### Listas  #### (p)
-
-Você pode criar listas não ordenadas usando "alt + d" na frente dos itens da lista:(p)
-
-(ul)para cada item;
-(ul)você deve colocar o marcador no início;
-(ul)a ferramenta converte automaticamente a primeira letra de itens de lista em maiúscula :)
-(ul)não esqueça de usar o marcador de parágrafo para encerrar a lista.(p)
-
-Para criar listas ordenadas use "alt + f":(p)
-
-(ol)fácil,
-(ol)rápido,
-(ol)prático!(p)
-
-#### Bloco de citação longa #### (p)
-
-Para criar uma citação longa use o atalho "alt + k":(p)
-
-(p)(block)(p)
-O bloco de texto já fica automaticamente recuado e com uma barra vertical do lado parágrafo para se destacar do restante do texto.(p)
-É possível também usar o marcador de parágrafo para criar outros parágrafos dentro do bloco de citação longa.
-(p)(/block)(p)
-
-#### Imagens  #### (p)
-
-É possível também adicionar uma imagem de algum endereço web. Basta usar o atalho "alt + i" e substituir o endereço da imagem pelo parâmetro "URL". Faça o teste abaixo:(p)
-
-Copie o endereço "https://converte-mais.vercel.app/amazonia.jpg" e substitua no código abaixo:(p) 
-
-(img | URL | LEGENDA | FONTE | DESCRIÇÃO)(p)
-
-Os outros parâmetros também podem ser substituidos. Faça o teste e substitua o parâmetro "LEGENDA" por um texto adequado ("Vista da floresta amazônica", por exemplo) e um texto que descreva a imagem para uma pessoa cega pelo parâmetro "DESCRIÇÃO".(p)
+                <textarea id="textInput" class="border" rows="10" cols="50" placeholder="">
                 </textarea><br><br>
 
                 <div id="" class="buttons">
@@ -421,7 +409,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
         </main>
 
         <footer>
-            <p class="author">Desenvolvido por Moa Schneider • Versão 2.0</p>
+            <p class="author">Desenvolvido por Moa Schneider • Versão 2.1</p>
         </footer>
 
 
@@ -637,7 +625,7 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                     const boxContent = paragraph.replace('(box)', '').trim();
                     
                     // Envolve o conteúdo com a tag <div>
-                    htmlOutput += `<div style="margin-top: 15px; padding: 10px; border: 2px solid #dfdfdf; background-color:#f2f2f2">\n\n\t${boxContent}`;
+                    htmlOutput += `<div style="margin: 1rem 0rem; padding: 1rem 1rem 0rem 1rem; border: 2px solid #dfdfdf; background-color:#f2f2f2">\n\n\t${boxContent}`;
 
                 } else if (paragraph.startsWith('(/box)')) {
                     // Remove o marcador (/box) sem remover espaços
@@ -692,33 +680,50 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                     htmlOutput += '<ul>\n' + listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ul>\n\n';
 
                 } else if (paragraph.startsWith('(ol)')) {
+                    // Split by (ol) and keep non-empty items
                     const listItems = paragraph.split('(ol)').map(item => item.trim()).filter(item => item.length > 0);
 
-                    // #### TESTE (24/10)
-                    // Aqui entra replace para tornar a primeira letra em maiúscula
-                    const listItemsPrimeiraMaiuscula = listItems.map(item => 
+                    // First, check if there's a style marker in the first item
+                    let listStyle = '';
+                    let modifiedItems = [...listItems]; // Create a copy of the items array
+
+                    // Check if first item starts with a style marker
+                    if (modifiedItems.length > 0) {
+                        const firstItem = modifiedItems[0];
+                        
+                        // Check for style markers at the beginning of the first item
+                        if (firstItem.startsWith('(x)')) {
+                            modifiedItems[0] = firstItem.replace(/^\(x\)\s*/, '').trim();
+                            listStyle = 'lower-alpha';
+                        } else if (firstItem.startsWith('(X)')) {
+                            modifiedItems[0] = firstItem.replace(/^\(X\)\s*/, '').trim();
+                            listStyle = 'upper-alpha';
+                        } else if (firstItem.startsWith('(i)')) {
+                            modifiedItems[0] = firstItem.replace(/^\(i\)\s*/, '').trim();
+                            listStyle = 'lower-roman';
+                        } else if (firstItem.startsWith('(I)')) {
+                            modifiedItems[0] = firstItem.replace(/^\(I\)\s*/, '').trim();
+                            listStyle = 'upper-roman';
+                        } else if (firstItem.startsWith('(0)')) {
+                            modifiedItems[0] = firstItem.replace(/^\(0\)\s*/, '').trim();
+                            listStyle = 'decimal-leading-zero';
+                        }
+                    }
+
+                    // Capitalizes the first letter of each item
+                    const listItemsPrimeiraMaiuscula = modifiedItems.map(item => 
                         item.replace(/^\s*([a-záéíóúàèìòùâêîôûãõçñäëïöü])/i, (match, p1) => p1.toUpperCase())
                     );
-                    // #### TESTE
 
-                    if (listItems[0].startsWith('(x.)')){
-                        listItems[0] = listItems[0].replace('(x.)', '');
-                        htmlOutput += '<ol style="list-style-type: lower-alpha;">\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
-                    } else if (listItems[0].startsWith('(X.)')){
-                        listItems[0] = listItems[0].replace('(X.)', '');
-                        htmlOutput += '<ol style="list-style-type: upper-alpha;">\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
-                    } else if (listItems[0].startsWith('(i.)')){
-                        listItems[0] = listItems[0].replace('(i.)', '');
-                        htmlOutput += '<ol style="list-style-type: lower-roman;">\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
-                    } else if (listItems[0].startsWith('(I.)')){
-                        listItems[0] = listItems[0].replace('(I.)', '');
-                        htmlOutput += '<ol style="list-style-type: upper-roman;">\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
-                    } else if (listItems[0].startsWith('(0.)')){
-                        listItems[0] = listItems[0].replace('(0.)', '');
-                        htmlOutput += '<ol style="list-style-type: decimal-leading-zero;">\n' + listItems.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
-                    } 
-                    else {
-                        htmlOutput += '<ol>\n' + listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ol>\n\n';
+                    // Render the list with the appropriate style
+                    if (listStyle) {
+                        htmlOutput += `<ol style="list-style-type: ${listStyle};">\n` + 
+                            listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + 
+                            '\n</ol>\n\n';
+                    } else {
+                        htmlOutput += '<ol>\n' + 
+                            listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + 
+                            '\n</ol>\n\n';
                     }
 
                 } else if (paragraph.startsWith('(img |')) {
@@ -1128,8 +1133,31 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                 // O texto selecionado
                 let selectedText = textarea.value.substring(start, end);
                 
-                // Verifica e substitui padrões como "X)", "X.", "X - " e "X-"
-                let newText = selectedText.replace(/(?<!\()\b([a-zA-Z0-9])[\)\.\-](?!\))/g, "(ol)");
+                // Processa linhas individualmente para melhor controle
+                let lines = selectedText.split('\n');
+                let processedLines = lines.map(line => {
+                    // Casos a tratar:
+                    // 1. "10.Texto" ou "a.Texto" - número/letra seguido de ponto sem espaço
+                    // 2. "10. Texto" ou "a. Texto" - número/letra seguido de ponto com espaço
+                    // 3. "10)Texto" ou "a)Texto" - número/letra seguido de parêntese sem espaço
+                    // 4. "10) Texto" ou "a) Texto" - número/letra seguido de parêntese com espaço
+                    // 5. "10-Texto" ou "a-Texto" - número/letra seguido de hífen sem espaço
+                    // 6. "10- Texto" ou "a- Texto" - número/letra seguido de hífen com espaço
+                    // 7. "10 -Texto" ou "a -Texto" - número/letra, espaço e hífen sem espaço
+                    // 8. "10 - Texto" ou "a - Texto" - número/letra, espaço e hífen com espaço
+
+                    // Regex para número/letra + espaço + hífen (com ou sem espaço após)
+                    if (line.match(/^[ \t]*([a-zA-Z0-9]+)\s+-\s*/)) {
+                        return line.replace(/^[ \t]*([a-zA-Z0-9]+)\s+-\s*/, "(ol)");
+                    }
+                    // Regex para número/letra + ponto/parêntese/hífen (com ou sem espaço após)
+                    if (line.match(/^[ \t]*([a-zA-Z0-9]+)[\.\)\-]\s*/)) {
+                        return line.replace(/^[ \t]*([a-zA-Z0-9]+)[\.\)\-]\s*/, "(ol)");
+                    }
+                    // Caso nenhum padrão seja encontrado, retorna a linha sem alteração
+                    return line;
+                });
+                let newText = processedLines.join('\n');
                 
                 // Atualiza o conteúdo do textarea com o novo texto sem perder o restante do conteúdo
                 textarea.setRangeText(newText, start, end, 'end');
@@ -1271,34 +1299,54 @@ Os outros parâmetros também podem ser substituidos. Faça o teste e substitua 
                 const itemsOl = content.split(/\s*\(ol\)/).slice(1); // Divide e ignora a parte antes do primeiro (ol)
                 
                 let listHtml = content; // Default to the original content
+                
+                // Função para capitalizar a primeira letra
+                const capitalizarPrimeiraLetra = (text) => {
+                    return text.replace(/^\s*([a-záéíóúàèìòùâêîôûãõçñäëïöü])/i, (match, p1) => p1.toUpperCase());
+                }
+                
                 if (itemsUl.length > 0 && itemsUl[0].trim() !== '') {
-                    const listItems = itemsUl.map(item => `<li>${item.trim()}</li>`).join('');
-                    listHtml = `${beforeList} <ul>${listItems}</ul>`;
+                    // Capitaliza a primeira letra de cada item da lista não ordenada
+                    const listItems = itemsUl.map(item => {
+                        const capitalizedItem = capitalizarPrimeiraLetra(item.trim());
+                        return `\n        <li>${capitalizedItem}</li>`;
+                    }).join('');
+                    
+                    listHtml = `${beforeList}\n      <ul>${listItems}\n      </ul>\n`;
                 } else if (itemsOl.length > 0 && itemsOl[0].trim() !== '') {
-                    if (itemsOl[0].startsWith('(x.)')){
-                        itemsOl[0] = itemsOl[0].replace('(x.)', '');
-                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
-                        listHtml = `${beforeList} <ol style="list-style-type: lower-alpha;">${listItems}</ol>`;
-                    } else if (itemsOl[0].startsWith('(X.)')){
-                        itemsOl[0] = itemsOl[0].replace('(X.)', '');
-                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
-                        listHtml = `${beforeList} <ol style="list-style-type: upper-alpha;">${listItems}</ol>`;
-                    } else if (itemsOl[0].startsWith('(i.)')){
-                        itemsOl[0] = itemsOl[0].replace('(i.)', '');
-                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
-                        listHtml = `${beforeList} <ol style="list-style-type: lower-roman;">${listItems}</ol>`;
-                    } else if (itemsOl[0].startsWith('(I.)')){
-                        itemsOl[0] = itemsOl[0].replace('(I.)', '');
-                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
-                        listHtml = `${beforeList} <ol style="list-style-type: upper-roman;">${listItems}</ol>`;
-                    } else if (itemsOl[0].startsWith('(0.)')){
-                        itemsOl[0] = itemsOl[0].replace('(0.)', '');
-                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
-                        listHtml = `${beforeList} <ol style="list-style-type: decimal-leading-zero;">${listItems}</ol>`;
+                    // Cria uma cópia para poder modificar o array
+                    let modifiedItems = [...itemsOl];
+                    let listStyle = '';
+                    
+                    // Verifica se o primeiro item tem um marcador de estilo
+                    if (modifiedItems[0].startsWith('(x)')) {
+                        modifiedItems[0] = modifiedItems[0].replace(/^\(x\)\s*/, '');
+                        listStyle = 'lower-alpha';
+                    } else if (modifiedItems[0].startsWith('(X)')) {
+                        modifiedItems[0] = modifiedItems[0].replace(/^\(X\)\s*/, '');
+                        listStyle = 'upper-alpha';
+                    } else if (modifiedItems[0].startsWith('(i)')) {
+                        modifiedItems[0] = modifiedItems[0].replace(/^\(i\)\s*/, '');
+                        listStyle = 'lower-roman';
+                    } else if (modifiedItems[0].startsWith('(I)')) {
+                        modifiedItems[0] = modifiedItems[0].replace(/^\(I\)\s*/, '');
+                        listStyle = 'upper-roman';
+                    } else if (modifiedItems[0].startsWith('(0)')) {
+                        modifiedItems[0] = modifiedItems[0].replace(/^\(0\)\s*/, '');
+                        listStyle = 'decimal-leading-zero';
+                    }
+                    
+                    // Capitaliza a primeira letra de cada item da lista ordenada
+                    const listItems = modifiedItems.map(item => {
+                        const capitalizedItem = capitalizarPrimeiraLetra(item.trim());
+                        return `\n        <li>${capitalizedItem}</li>`;
+                    }).join('');
+                    
+                    // Aplica o estilo apropriado
+                    if (listStyle) {
+                        listHtml = `${beforeList}\n      <ol style="list-style-type: ${listStyle};">${listItems}\n      </ol>\n`;
                     } else {
-                        const listItems = itemsOl.map(item => `<li>${item.trim()}</li>`).join('');
-                        listHtml = `${beforeList} <ol>${listItems}</ol>`;
-
+                        listHtml = `${beforeList}\n      <ol>${listItems}\n      </ol>\n`;
                     }
                 }
 

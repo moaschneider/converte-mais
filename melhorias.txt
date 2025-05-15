@@ -110,7 +110,8 @@ VANTAGENS:
 - Inclui automaticamente padrões de alinhamento (centraliza imagens, tabelas);
 - Destaca palavras proibidas, perguntas retóricas e ausência de espaçamento entre números e unidades;
 - Converte tabelas com todas as funcionalidades (formatação de cabeçalho (th), centralização de conteúdo (colocar dois pontos ":" no início do texto da célula), colspan, rowspan, lista dentro de célula);
-- Converte listas ordenadas (ol) e não ordenadas (ul);
+- Converte em listas ordenadas (ol) atalho "Alt + F"
+- Converte em listas não ordenadas (ul) atalho "Alt + D";
 - Converte a primeira letra do item de lista em maiúscula;
 - Inclui automaticamente imagem (img), recomendo usar o atalho "Alt + I";
 - Inclui automaticamente numeração de imagens (não precisa fazer nada, ao clicar em "Gerar" ele identifica todas as imagens e numera automaticamente);
