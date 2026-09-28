@@ -15,7 +15,7 @@ O **Converte Mais** é uma ferramenta web que ajuda a transformar conteúdos de 
 
 ## Como usar
 
-1. Abra [index.html](index.html) no navegador.
+1. Acesse [Converte Mais](https://converte-mais.vercel.app/).
 2. Carregue um PDF na área ao lado do editor para consultar o material enquanto trabalha.
 3. Digite ou cole o conteúdo no editor e use os marcadores ou atalhos disponíveis.
 4. Clique em **GERAR** ou use `Ctrl + Enter` para converter.
