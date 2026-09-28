@@ -1,0 +1,406 @@
+:root {
+    --height: 35vh;
+    --normal-text: 16px;
+    --regular-font: 'Sora', sans-serif;
+    --special-font: 'Krona One', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: var(--regular-font);
+    font-size: var(--normal-text);
+}
+
+body {
+    background-color: #ddd;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 500;
+    color: #32ab53;
+}
+
+h1 {
+    font-size: 27px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+header h1 {
+    font-family: var(--special-font);
+    font-weight: bold;
+    text-transform: lowercase;
+    font-size: 48px;
+    letter-spacing: -3px;
+    margin: 0;
+    padding-bottom: 0;
+    line-height: 1;
+}
+
+header p {
+    margin: 0;
+    align-self: flex-end;
+    padding-bottom: 5px;
+}
+
+header div {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+header div p {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+
+header a:visited {
+    color: #555;
+}
+
+header a {
+    text-decoration: none;
+    color: #333;
+}
+
+header a:hover {
+    text-decoration: underline;
+}
+
+h2 {
+    font-size: 23px;
+}
+
+h3 {
+    font-size: 21px;
+}
+
+h4 {
+    font-size: 19px;
+}
+
+h5 {
+    font-size: 17px;
+}
+
+h6 {
+    font-size: 15px;
+}
+
+.b {
+    border: 1px solid red;
+}
+
+.border {
+    border: 0px solid black;
+    border-radius: 20px;
+}
+
+pre {
+    white-space: pre-wrap;
+    /* Para preservar espaços e quebras de linha */
+}
+
+code {
+    font-family: monospace;
+    white-space: pre;
+}
+
+sub,
+sup {
+    font-size: 11px;
+}
+
+.margin {
+    margin: 0 auto;
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    display: flex;
+    gap: 50px;
+    min-height: var(--height);
+}
+
+footer {
+    padding-top: 50px;
+}
+
+.entry-data {
+    width: 100%;
+    flex-grow: 1;
+}
+
+.author {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+#textInput {
+    width: 100%;
+    height: var(--height);
+    padding: 20px;
+    font-size: var(--normal-text);
+    line-height: 1.5em;
+    resize: vertical;
+    border-radius: 20px;
+}
+
+.buttons {
+    max-width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.buttons__functions {
+    max-width: 70%;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.buttons__functions__tags,
+.buttons__functions__copy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.buttons__functions__tags button,
+.buttons__functions__copy button {
+    cursor: pointer;
+}
+
+.buttons__functions__tags {
+    display: none;
+}
+
+#copyTextButton,
+#copyHtmlButton,
+#generateButton,
+#shortcutsButton {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    color: white;
+    border-radius: 30px;
+    /* outline: 0; */
+}
+
+#generateButton {
+    color: black;
+    background-color: limegreen;
+    border-color: limegreen;
+}
+
+#copyTextButton,
+#copyHtmlButton,
+#shortcutsButton {
+    background-color: black;
+    border: 0.5px solid black;
+}
+
+#shortcutsButton {
+    background-color: grey;
+    border: 0.5px solid grey;
+}
+
+.textos {
+    margin: 30px 0 100px 0;
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.textos__html {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    margin-bottom: 30px;
+    line-height: 1.5em;
+}
+
+#htmlListaDeImagens {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+#htmlListaDeImagens img {
+    width: 240px;
+    object-fit: cover;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+}
+
+td,
+th {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+img {
+    max-width: 100%;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 60px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 15px;
+    font-weight: normal;
+
+    /* Posição da tooltip */
+    position: absolute;
+    z-index: 1;
+    bottom: 130%;
+    left: 50%;
+    margin-left: -30px;
+
+    /* Efeito de transição */
+    opacity: 0;
+    transition: opacity .8s;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+#generateButton .tooltiptext {
+    width: 110px;
+}
+
+span {
+    font-size: inherit;
+}
+
+blockquote {
+    border-left: 5px solid #ccc;
+    padding-left: 15px;
+    margin-inline-start: 40px;
+    margin-inline-end: 40px;
+}
+
+#iframe {
+    max-width: 100%;
+    width: 100%;
+    height: var(--height);
+    resize: vertical;
+}
+
+@media screen and (max-width: 970px) {
+    main {
+        display: block;
+        min-height: var(--height);
+    }
+
+    #entry-data-pdf {
+        display: none;
+    }
+}
+
+.pdf-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.file-input {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+    background-color: black;
+    border: 0.5px solid black;
+    border-radius: 30px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.file-input::-webkit-file-upload-button {
+    display: none;
+}
+
+/* Esconde o texto padrão do input */
+.file-input {
+    color: transparent;
+    /* Torna o texto do input transparente */
+}
+
+.file-input::before {
+    content: 'SELECIONAR PDF';
+    display: inline-block;
+    cursor: pointer;
+    color: white;
+    /* Restaura a cor do texto apenas para o pseudo-elemento */
+    position: absolute;
+}
+
+.file-input.file-selected::before {
+    content: attr(data-file-name);
+}
+
+.pdf-button {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+    background-color: black;
+    border: 0.5px solid black;
+    border-radius: 30px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+#instructions {
+    display: none;
+    padding: 20px;
+    background-color: honeydew;
+    background-color: mintcream;
+    background-color: #a9eca9;
+    color: #276327;
+    color: #143014;
+    border-radius: 20px;
+    margin-bottom: 30px;
+}

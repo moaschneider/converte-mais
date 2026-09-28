@@ -1,0 +1,984 @@
+const instructionsDiv =document.getElementById('instructions');
+
+function showInstructions() {
+    const isHidden = instructionsDiv.style.display === 'none' || instructionsDiv.style.display === '';
+    instructionsDiv.style.display = isHidden ? 'block' : 'none';
+}
+
+function showExample() {
+    const textarea = document.getElementById('textInput');
+    const textoExemplo = ` # Tutorial "Converte Mais" #(p)
+    Bora entender como é fácil e prático de usar. Basicamente você só precisa colar o texto aqui e clicar no botão "Gerar" para que (st) várias funcionalidades (st) já entrem em ação. (p) `;
+    textarea.value = textoExemplo.trim();
+    textarea.focus();
+}
+
+// Função para carregar a URL do localStorage
+function carregarPdf() {
+    const input = document.getElementById('fileInput');
+    if (input.files && input.files[0]) {
+        const fileURL = URL.createObjectURL(input.files[0]);
+        const iframe = document.getElementById('iframe');
+        iframe.src = fileURL;
+        
+        // Atualiza o texto do botão para mostrar o nome do arquivo
+        input.setAttribute('data-file-name', input.files[0].name.toUpperCase());
+    }
+}
+
+// Evento para carregar o PDF do arquivo selecionado
+document.getElementById("fileInput").addEventListener("change", function(event) {
+const file = event.target.files[0];
+// if (file && file.type === "application/pdf") {
+    const fileURL = URL.createObjectURL(file); // Cria uma URL temporária para o arquivo
+    const iframe = document.getElementById("iframe");
+    iframe.src = fileURL; // Define a URL como fonte do iframe
+// } else {
+//   alert("Por favor, selecione um arquivo PDF.");
+// }
+});
+
+// Carregar automaticamente a URL salva ao iniciar a página
+window.onload = carregarPdf;
+
+
+// Variáveis que recebem os diversos processamentos e que vão ser inseridas nas divs
+let htmlOutput = '';
+let htmlResultado = '';
+let htmlListaDeImagens = '';
+let references = [];
+
+// Nomes das divs onde entra o html código e o html resultante
+const htmlCodigoDiv = document.getElementById('htmlCodigo');
+const htmlResultadoDiv = document.getElementById('htmlResultado');
+const htmlListaDeImagensDiv = document.getElementById('htmlListaDeImagens');
+
+// ::: PROCESSA BOLD E ITÁLICO :::
+function converteInlineTags(text) {
+
+    text = text.replace(/\(st\)(.*?)\(st\)/g, '<strong>$1</strong>'); // Negrito com (st)
+    text = text.replace(/\(em\)(.*?)\(em\)/g, '<em>$1</em>'); // Negrito com (em)
+    text = text.replace(/\(sup\)(.*?)\(sup\)/g, '<sup>$1</sup>'); // Superescrito com (sup)
+    text = text.replace(/\(sub\)(.*?)\(sub\)/g, '<sub>$1</sub>'); // Subscrito com (sub)
+    text = text.replace(/\(code\)(.*?)\(code\)/g, '<code>$1</code>'); // Code com (code)
+    text = text.replace(/\(br\)/g, '<br>'); // Insere quebra de linha <br>
+
+    // Process references
+    if (text.includes('(ref [')) {
+        const refMatches = text.match(/\(ref \[(.*?)\]\)/g);
+        if (refMatches) {
+            refMatches.forEach(match => {
+                const refText = match.replace('(ref [', '').replace('])', '');
+                if (!references.includes(refText)) {
+                    references.push(refText);
+                }
+                text = text.replace(match, refText);
+            });
+        }
+    }      
+
+
+    // DESABILITADA POR QUESTÃO DO <SPAN> MAS FUNCIONANDO
+    // Solução para não evitar quebrar frases pequenas dentro de células de tabela
+    // text = text.replace(/\(pre\)(.*?)\(pre\)/g, '<span style="white-space: nowrap;">$1</span>'); // Insere tag <pre>
+
+    text = destacarPalavras(text);
+
+    return text;
+}
+
+function converteHtmlToEntityNames(text) {
+    return text
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
+
+// Destacar palavras e letras "proibidas"
+const palavrasProibidas = ['alunos', 'aluno', 'aluna', 'alunas', '\\?'];
+const unidadesMedida = ['ºC', 'kg', 'm2', 'mm', 'km', 'L', 'ml', 'm', 'g', 'cm', 'Ω', 'KΩ', 'MΩ', 'V', 'W', 'Hz'];
+
+
+function destacarPalavras(texto) {
+    palavrasProibidas.forEach(palavra => {
+        // Tratar o ponto de interrogação separadamente
+        if (palavra === '\\?') {
+            texto = texto.replace(/([\p{L}\w]+)\?/gu, '<span style="color: red; font-weight: bold;">$1?</span>');
+        } else {
+            // Regex com bordas de palavras para outras palavras proibidas
+            const regex = new RegExp(`\\b(${palavra})\\b`, 'gi');
+            texto = texto.replace(regex, '<span style="color: red; font-weight: bold;">$1</span>');
+        }
+    });
+    
+    // Remove as barras invertidas que escapam os pontos de interrogação
+    texto = texto.replace(/\\\?/g, '?');
+    
+    // Destacar números sem espaço antes das unidades de medida
+    unidadesMedida.forEach(unidade => {
+        const regex = new RegExp(`(\\d+)(${unidade})`, 'g'); // detecta números seguidos diretamente pela unidade
+        texto = texto.replace(regex, '<span style="color: red; font-weight: bold;">$1$2</span>');
+    });
+    
+
+
+    // Destaca palavras possivelmente quebradas com hífen
+    texto = texto.replace(/(\w+[-][\s]+\w+)/gi, '<span style="color: red; font-weight: bold;">$1</span>');
+
+    // Elimina hífen e une as duas partes de palavra quebrada por hifenização. Status: desabilitada, está funcionando, só tem que avaliar pra talvez colocar em um botão.
+    // texto = texto.replace(/(\w+)[-][\s+](\w+)/gi, '$1$2');
+
+    return texto;    
+}
+
+function limpaTexto(texto){
+    return texto
+    .replace(/[\r\n]+/g, ' ')        // Remove quebra de linha
+    .replace(/\s{2,}/g, ' ')     // Remove espaços excessivos
+    .trim();                    // Remove espaços no início e no final
+}
+
+// ::: 1 - RECEBE O TEXTO, REMOVE ESPAÇOS E QUEBRAS EXCESSIVAS E PROCESSA PARÁGRAFOS :::
+function generateText() {
+    
+    let textInput = document.getElementById('textInput').value;
+    
+    // Reset references array at the start of each generation
+    references = [];
+    
+    // Divide o texto em parágrafos usando (p)
+    const paragraphs = textInput.split('(p)').map(p => p.trim()).filter(p => p.length > 0);
+    
+    // Variáveis que recebem os diversos processamentos ao longo do script e que vão ser inseridas nas divs
+    htmlOutput = '';
+    htmlResultado = '';
+    htmlListaDeImagens = '';
+    
+    processarParagrafos(paragraphs);
+
+    // Mostra a div com os previews de texto e html
+    document.querySelector('.textos').style.display = 'flex';
+
+    const htmlOutputAjustado = removeEspacamentoDuplicado(htmlOutput);
+    
+    htmlCodigoDiv.textContent = htmlOutputAjustado;
+    htmlResultadoDiv.innerHTML = htmlOutputAjustado;
+    htmlListaDeImagensDiv.innerHTML = htmlListaDeImagens;
+
+    // Add references to the references div
+    const referenciasContainer = document.getElementById('referenciasContainer');
+    if (references.length > 0) {
+        const referenciasDiv = document.getElementById('referencias');
+        // Sort references alphabetically
+        const sortedReferences = references.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        referenciasDiv.innerHTML = '<ul>\n' + 
+            sortedReferences.map(ref => `\t<li>${ref}</li>`).join('\n') + 
+            '\n</ul>';
+        referenciasContainer.style.display = 'block';
+    } else {
+        referenciasContainer.style.display = 'none';
+    }
+}
+
+function removeEspacamentoDuplicado(html) {
+    // Regex que encontra uma ou mais repetições consecutivas de <p><br></p>
+    const regex = /(<p><br><\/p>\s*)+/g;
+    
+    // Substitui qualquer repetição por apenas uma ocorrência
+    return html.replace(regex, '<p><br></p>\n\n');
+}
+
+
+// ::: 2 - PROCESSA OS PARÁGRAFOS ::: 
+function processarParagrafos(paragraphs) {
+    let photoNumber = 1;
+    let contador = 1;
+    
+    paragraphs.forEach(paragraph => {
+
+    // Se for uma tag <pre>, pula a remoção de espaços
+    if (paragraph.startsWith('(pre)')) {
+        const preContent = paragraph.replace('(pre)', ''); // Remove (pre) sem remover espaços
+        
+        // Simula o <pre> usando div com white-space
+            htmlOutput += `<div style="white-space: pre-wrap;">${converteInlineTags(preContent)}</div>\n\n`;
+            
+    } 
+    
+    else if (paragraph.startsWith('(precode)')) {
+        const precodeContent = paragraph.replace('(precode)', '');
+        htmlOutput += `<pre>\n<code>${converteInlineTags(precodeContent)}</code>\n</pre>\n\n`;
+    }
+
+    else if (paragraph.startsWith('(codeblock)')) {
+            const codeblockContent = paragraph.replace('(codeblock)', '').trim();
+            htmlOutput += `<div style="background: #ffffff; border: solid gray; border-width: 0.01em 0.01em 0.01em 0.8em; padding: 0.02em 0.6em; overflow: auto; width: auto;">\n\t<pre style="margin: 0; line-height: 125%;">${converteHtmlToEntityNames(codeblockContent)}</pre>\n</div>\n\n`;
+    }
+    
+    else {
+        // Se não for <pre> remove quebras e espaços excessivos
+        paragraph = limpaTexto(paragraph);
+
+        // Converte hashtags em títulos ou mantém como parágrafo
+        const convertedText = converteTitulos(paragraph);  
+        
+        // Detecta uma tabela e processa
+        if (paragraph.startsWith('(table)') && paragraph.endsWith('(table)')) {
+            
+            const tableContent = paragraph.replace(/^\(table\)|\(table\)$/g, '').trim();
+            const tableHtml = textToHtmlTable(tableContent);
+            
+            htmlOutput += tableHtml + '\n\n';
+            
+
+        } else if (paragraph.startsWith('(box)')) {
+            // Remove o marcador (box) sem remover espaços
+            const boxContent = paragraph.replace('(box)', '').trim();
+            
+            // Envolve o conteúdo com a tag <div>
+            htmlOutput += `<div style="margin: 1rem 0rem; padding: 1rem 1rem 0rem 1rem; border: 2px solid #dfdfdf; background-color:#f2f2f2">\n\n\t${boxContent}`;
+
+        } else if (paragraph.startsWith('(/box)')) {
+            // Remove o marcador (/box) sem remover espaços
+            const boxContent = paragraph.replace('(/box)', '').trim();
+            
+            // Envolve o conteúdo com a tag </div>
+            htmlOutput += `${boxContent}</div>\n\n`;
+
+
+        } else if (paragraph.startsWith('(block)')) {
+            // Remove o marcador (block) sem remover espaços
+            const blockquoteContent = paragraph.replace('(block)', '').trim();
+            
+            // Envolve o conteúdo com a tag <blockquote>
+            htmlOutput += `<blockquote>\n\n${blockquoteContent}`;
+
+        } else if (paragraph.startsWith('(/block)')) {
+            // Remove o marcador (/block) sem remover espaços
+            const blockquoteContent = paragraph.replace('(/block)', '').trim();
+            
+            // Envolve o conteúdo com a tag <blockquote>
+            htmlOutput += `${blockquoteContent}</blockquote>\n\n`;
+        
+        } else if (paragraph.startsWith('(code)')) {
+            // Remove o marcador (code) sem remover espaços
+            const blockquoteContent = paragraph.replace('(code)', '').trim();
+            
+            // Envolve o conteúdo com a tag <code>
+            htmlOutput += `<code>${blockquoteContent}</code><br>\n\n`;
+
+        } 
+
+            else if (paragraph.startsWith('(linha)')) {
+            // Remove o marcador (linha) sem remover espaços
+            const hrContent = paragraph.replace('(linha)', '').trim();
+            
+            // Insere a tag <hr>
+            htmlOutput += `<hr>\n\n`;
+
+
+        } else if (paragraph.startsWith('(ul)')) {
+
+            const listItems = paragraph.split('(ul)').map(item => item.trim()).filter(item => item.length > 0);
+            
+            // #### TESTE (24/10)
+            // Aqui entra replace para tornar a primeira letra em maiúscula
+            const listItemsPrimeiraMaiuscula = listItems.map(item => 
+                item.replace(/^\s*([a-záéíóúàèìòùâêîôûãõçñäëïöü])/i, (match, p1) => p1.toUpperCase())
+            );
+            // #### TESTE
+            
+            
+            
+            htmlOutput += '<ul>\n' + listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ul>\n\n';
+
+        } else if (paragraph.startsWith('(ol)')) {
+            // Split by (ol) and keep non-empty items
+            const listItems = paragraph.split('(ol)').map(item => item.trim()).filter(item => item.length > 0);
+
+            // First, check if there's a style marker in the first item
+            let listStyle = '';
+            let modifiedItems = [...listItems]; // Create a copy of the items array
+
+            // Check if first item starts with a style marker
+            if (modifiedItems.length > 0) {
+                const firstItem = modifiedItems[0];
+                
+                // Check for style markers at the beginning of the first item
+                if (firstItem.startsWith('(x)')) {
+                    modifiedItems[0] = firstItem.replace(/^\(x\)\s*/, '').trim();
+                    listStyle = 'lower-alpha';
+                } else if (firstItem.startsWith('(X)')) {
+                    modifiedItems[0] = firstItem.replace(/^\(X\)\s*/, '').trim();
+                    listStyle = 'upper-alpha';
+                } else if (firstItem.startsWith('(i)')) {
+                    modifiedItems[0] = firstItem.replace(/^\(i\)\s*/, '').trim();
+                    listStyle = 'lower-roman';
+                } else if (firstItem.startsWith('(I)')) {
+                    modifiedItems[0] = firstItem.replace(/^\(I\)\s*/, '').trim();
+                    listStyle = 'upper-roman';
+                } else if (firstItem.startsWith('(0)')) {
+                    modifiedItems[0] = firstItem.replace(/^\(0\)\s*/, '').trim();
+                    listStyle = 'decimal-leading-zero';
+                }
+            }
+
+            // Capitalizes the first letter of each item
+            const listItemsPrimeiraMaiuscula = modifiedItems.map(item => 
+                item.replace(/^\s*([a-záéíóúàèìòùâêîôûãõçñäëïöü])/i, (match, p1) => p1.toUpperCase())
+            );
+
+            // Render the list with the appropriate style
+            if (listStyle) {
+                htmlOutput += `<ol style="list-style-type: ${listStyle};">\n` + 
+                    listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + 
+                    '\n</ol>\n\n';
+            } else {
+                htmlOutput += '<ol>\n' + 
+                    listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + 
+                    '\n</ol>\n\n';
+            }
+
+        } else if (paragraph.startsWith('(img |')) {
+            // Processa figure e insere imagem de marcação
+            const imgContent = paragraph.replace('(img |', '').replace(/\)$/, '').trim();
+            const autoFigureNumber = photoNumber++;
+
+            // Split by | but preserve parentheses in the content
+            const parts = imgContent.split('|').map(item => item.trim());
+            const imgUrl = parts[0];
+            const imgFigureCaption = parts[1];
+            const imgSource = parts[2];
+            const imgDescription = parts[3];
+
+            // Palavras proibidas em legenda e descrição de fotos
+            const imgFigureCaptionDestacado = destacarPalavras(imgFigureCaption);
+            const imgDescriptionDestacado = destacarPalavras(imgDescription);
+
+            // CÓDIGO PARA ADICIONAR URL DA FOTO VALENDO
+            htmlOutput += `<figure>\n`;
+            
+            let imgSourceUrl;
+            
+            if (imgUrl === 'URL'){
+                htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="https://placehold.co/500x300/32ab53/black.png?text=${imgFigureCaptionDestacado}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
+                htmlListaDeImagens += `<img src="https://placehold.co/500x300/32ab53/black.png?text=${imgFigureCaptionDestacado}">\n`;
+            } else {
+                htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="${imgUrl || ''}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
+                htmlListaDeImagens += `<a href="#${contador}" onclick="copiaUrl('${imgUrl}')"><img id="${contador}" src="${imgUrl || ''}"></a>\n`;
+                imgSourceUrl = imgUrl;
+            }
+            contador++;
+
+            htmlOutput += `\t<p style="text-align: center;">Figura ${autoFigureNumber} - ${imgFigureCaptionDestacado || '\n'}<br>\n\t\t<sub>Fonte: ${imgSourceUrl || imgSource || ''}</sub>\n\t</p>\n`;
+            htmlOutput += `\t<p>\n\t\t<sub>Descrição da imagem: ${imgDescriptionDestacado || ''}</sub>\n\t</p>\n`;
+            htmlOutput += `</figure>\n\n`;
+            htmlOutput += `<p><br></p>\n\n`;
+
+        } else if (paragraph.startsWith('(pcent)')){
+            const paragraphCentralized = paragraph.replace('(pcent)', '').trim();
+
+            htmlOutput += `<p style="text-align: center">${converteInlineTags(paragraphCentralized)}</p>\n\n`;
+        
+        } else {
+
+            // Adiciona o texto convertido no HTML
+            htmlOutput += convertedText + '\n\n';
+        }
+    }
+});
+    
+    // Add references to the references div
+    if (references.length > 0) {
+        const referenciasDiv = document.getElementById('referencias');
+        // Sort references alphabetically
+        const sortedReferences = references.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        referenciasDiv.innerHTML = '<ul>\n' + 
+            sortedReferences.map(ref => `\t<li>${ref}</li>`).join('\n') + 
+            '\n</ul>';
+    }
+}
+
+// FUNÇÃO PARA COPIAR A IMAGEM CORRETA PARA A ÁREA DE TRANSFERÊNCIA
+function copiaUrl(url){
+    // console.log(url);
+    const tempInput = document.createElement('input');
+    tempInput.value = url;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+}
+
+
+// ::: 3 - CONVERSÃO DE # EM TÍTULOS :::
+function converteTitulos(text) {
+
+    const textAjustado = limpaTexto(text);
+    // console.log(textAjustado);
+
+    // Regex para detectar títulos
+    const titleRegex = /^(#{1,6})\s*(.+?)\s*#{1,6}$/;
+
+    
+    // Se o texto corresponder ao padrão de título, retorna a tag de título
+    const match = textAjustado.match(titleRegex);
+    if (match) {
+        const level = match[1].length; // O número de hashtags define o nível do título
+        // console.log(level);
+        const tituloPalavrasProibidas = destacarPalavras(match[2]);
+        // console.log(tituloPalavrasProibidas);
+
+        if (htmlOutput === '') {
+            return `<h${level}>${tituloPalavrasProibidas.trim()}</h${level}>`;
+        } else {
+            return `<p><br></p>\n\n<h${level}>${tituloPalavrasProibidas.trim()}</h${level}>`;
+        }
+    }
+
+    // Se não for título, retorna o texto original
+    return `<p>${converteInlineTags(text)}</p>`;
+}
+
+
+// Define o texto das teclas de atalhos e botões simultaneamente
+const atalhos = {
+    h1: {marcador: " # ", tecla: "1"},
+    h2: {marcador: " ## ", tecla: "2"},
+    h3: {marcador: " ### ", tecla: "3"},
+    h4: {marcador: " #### ", tecla: "4"},
+    h5: {marcador: " ##### ", tecla: "5"},
+    h6: {marcador: " ###### ", tecla: "6"},
+    ul2: {marcador: "(ul)", tecla: "a"},
+    table: {marcador: "\n(p)(table)\n\n(table)(p)\n", tecla: "b", antes: "\n(p)(table)\n", depois: "\n(table)(p)\n"},
+    code: {marcador: "(code)", tecla: "c"},
+    precode: {marcador: "(precode)", tecla: "ç"},
+    ul: {marcador: "(ul)", tecla: "d"},
+    ol: {marcador: "(ol)", tecla: "f"},
+    th: {marcador: "(th)", tecla: "h"},
+    img: {marcador: "\n(img | URL | LEGENDA | FONTE | DESCRIÇÃO)(p)\n", tecla: "i"},
+    thcentralizado: {marcador: "(th):", tecla: "j"},
+    blockquote: {marcador: "\n(p)(block)(p)\n\n(p)(/block)(p)\n", tecla: "k", antes: "\n(p)(block)(p)\n\n", depois: "\n\n(p)(/block)(p)\n" },
+    hr: {marcador: "(linha)", tecla: "l"},
+    codeblock: {marcador: "(codeblock)", tecla: "n"},
+    box: {marcador: "\n(p)(box)(p)\n\n(p)(/box)(p)\n\n", tecla: "o", antes: "\n(p)(box)(p)\n\n", depois: "\n\n(p)(/box)(p)\n" },
+    pre: {marcador: "(pre)", tecla: "p"},
+    br: {marcador: "(br)", tecla: "q"},
+    ref: {marcador: "(ref [ ] )", tecla: "r", antes: "(ref [", depois: "])"},
+    p: {marcador: "(p)", tecla: "s"},
+    sub: {marcador: "(sub)", tecla: "u"},
+    strong: {marcador: "(st)", tecla: "x"},
+    sup: {marcador: "(sup)", tecla: "y"},
+    em: {marcador: "(em)", tecla: "z"},
+}
+
+// ::: COPIAR PARA ÁREA DE TRANSFERÊNCIA :::
+function copyToClipboard(content) {
+    const tempInput = document.createElement('textarea');
+    tempInput.value = content;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+}
+
+
+// ::: COPIA TAGS DOS BOTÕES :::
+document.getElementById('copyHtmlButton').addEventListener('click', () => {
+    const htmlContent = document.querySelector('#htmlCodigo').textContent;
+    copyToClipboard(htmlContent);
+});
+
+
+// ::: COPIAR CÓDIGOS, TEXTOS E TECLAS DE ATALHO :::
+function copiarConteudoVisivel() {
+    const htmlDiv = document.getElementById("htmlResultado");
+
+    // Cria um intervalo de seleção
+    const range = document.createRange();
+    range.selectNodeContents(htmlDiv); // Seleciona todo o conteúdo visível da div
+
+    // Limpa seleções anteriores
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+
+    // Adiciona o intervalo (o conteúdo da div) à seleção
+    selection.addRange(range);
+
+    // Executa o comando de cópia
+    document.execCommand("copy");
+
+    // Remove a seleção (opcional, para desfazer a seleção visível)
+    selection.removeAllRanges();
+}
+
+// Evento de clique no botão para copiar
+document.getElementById("copyTextButton").addEventListener("click", copiarConteudoVisivel);
+
+const textarea = document.getElementById('textInput');
+
+// Função para inserir o marcador na posição atual do cursor
+function insertTextAtCursor(text) {
+    const startPos = textarea.selectionStart;
+    const endPos = textarea.selectionEnd;
+
+    // Insere o texto na posição atual do cursor
+    const beforeText = textarea.value.substring(0, startPos);
+    const afterText = textarea.value.substring(endPos, textarea.value.length);
+    textarea.value = beforeText + text + afterText;
+
+    // Reposiciona o cursor após o texto inserido
+    textarea.selectionStart = textarea.selectionEnd = startPos + text.length;
+
+    // Foco de volta para a área de texto
+    textarea.focus();
+}
+
+// Definições das teclas de atalho
+addEventListener('keydown', function(event){
+    if (event.ctrlKey && event.key === 'Enter') {
+        event.preventDefault(); // Evita o comportamento padrão
+        generateText(); // Chama a função generateText()
+    }
+})
+
+
+textarea.addEventListener('keydown', function(event) {
+    
+    if (event.altKey && event.ctrlKey && event.key.toLowerCase() === atalhos["p"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["p"]["marcador"] + '\n'); // Insere o texto "(p)"
+    } 
+    
+    else if (event.altKey && event.key.toLowerCase() === atalhos["p"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["p"]["marcador"]); // Insere o texto "(p)"
+    }
+    
+    if (event.ctrlKey && event.key === 'Enter') {
+        event.preventDefault(); // Evita o comportamento padrão
+        generateText(); // Chama a função generateText()
+    }
+    
+    // Atalho de lista não ordenada foi para junto do código para substituir bullets por seleção de texto (abaixo)
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["precode"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["precode"]["marcador"] + '\n'); // Insere o texto "(precode)"
+    }
+    
+    if (event.altKey && event.key.toLowerCase() === atalhos["code"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["code"]["marcador"]); // Insere o texto "(code)"
+    }
+    
+    if (event.altKey && event.key.toLowerCase() === atalhos["codeblock"]["tecla"]){
+        event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["codeblock"]["marcador"]);
+    }
+                
+    if (event.altKey && event.key.toLowerCase() === atalhos["pre"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["pre"]["marcador"] + '\n'); // Insere o texto "(pre)"
+    }
+    
+    if (event.altKey && event.key.toLowerCase() === atalhos["br"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["br"]["marcador"]); // Insere o texto "(br)"
+    }
+    
+    if (event.altKey && event.key.toLowerCase() === atalhos["hr"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["hr"]["marcador"]); // Insere o texto "(linha)"
+    }
+    
+    if (event.altKey && event.key.toLowerCase() === atalhos["th"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["th"]["marcador"]); // Insere o texto "(th)"
+    }
+    
+    if (event.altKey && event.key.toLowerCase() === atalhos["thcentralizado"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["thcentralizado"]["marcador"]); // Insere o texto "(th):"
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["strong"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["strong"]["marcador"]); // Insere o texto "(st)"
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["sub"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["sub"]["marcador"]); // Insere o texto "(sub)"
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["sup"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["sup"]["marcador"]); // Insere o texto "(sup)"
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["em"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["em"]["marcador"]); // Insere o texto "(em)"
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["h1"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["h1"]["marcador"]); // Insere o texto " #### "
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["h2"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["h2"]["marcador"]); // Insere o texto " #### "
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["h3"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["h3"]["marcador"]); // Insere o texto " #### "
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["h4"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["h4"]["marcador"]); // Insere o texto " #### "
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["h5"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["h5"]["marcador"]); // Insere o texto " ##### "
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["h6"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["h6"]["marcador"]); // Insere o texto " ##### "
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["img"]["tecla"]) {
+        // event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["img"]["marcador"]); // Insere imagem
+    }
+
+    if (event.altKey && event.key === atalhos["table"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        
+        // Pega a posição de início e fim da seleção de texto
+        let start = textarea.selectionStart;
+        let end = textarea.selectionEnd;
+        
+        // O texto selecionado
+        let selectedText = textarea.value.substring(start, end);
+        
+        // Adiciona os marcadores (p)(table) antes e depois da seleção
+        let before = atalhos["table"]["antes"];
+        let after = atalhos["table"]["depois"];
+        let newText = before + selectedText + after;
+        
+        // Atualiza o conteúdo do textarea com os marcadores
+        textarea.setRangeText(newText, start, end, 'end');
+    }
+
+    if (event.altKey && event.key === atalhos["box"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        
+        // Pega a posição de início e fim da seleção de texto
+        let start = textarea.selectionStart;
+        let end = textarea.selectionEnd;
+        
+        // O texto selecionado
+        let selectedText = textarea.value.substring(start, end);
+        
+        // Adiciona os marcadores (box) antes e depois da seleção
+        let before = atalhos["box"]["antes"];
+        let after = atalhos["box"]["depois"];
+        let newText = before + selectedText + after;
+        
+        // Atualiza o conteúdo do textarea com os marcadores
+        textarea.setRangeText(newText, start, end, 'end');
+    } 
+
+    if (event.altKey && event.key === atalhos["blockquote"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        
+        // Pega a posição de início e fim da seleção de texto
+        let start = textarea.selectionStart;
+        let end = textarea.selectionEnd;
+        
+        // O texto selecionado
+        let selectedText = textarea.value.substring(start, end);
+        
+        // Adiciona os marcadores (block) antes e depois da seleção
+        let before = atalhos["blockquote"]["antes"];
+        let after = atalhos["blockquote"]["depois"];
+        let newText = before + selectedText + after;
+        
+        // Atualiza o conteúdo do textarea com os marcadores
+        textarea.setRangeText(newText, start, end, 'end');
+    } 
+
+    if (event.altKey && event.ctrlKey && event.key === atalhos["ul"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        
+        // Pega a posição de início e fim da seleção de texto
+        let start = textarea.selectionStart;
+        let end = textarea.selectionEnd;
+        
+        // O texto selecionado
+        let selectedText = textarea.value.substring(start, end);
+        
+        // Verifica se há bullets "•" e substitui por "(ul)"
+        if (selectedText.includes("•")) {
+            let newText = selectedText.replace(/•/g, "(ul)");
+            
+            // Atualiza o conteúdo do textarea com o novo texto sem perder o restante do conteúdo
+            textarea.setRangeText(newText, start, end, 'end');
+        }
+        
+        // Verifica se há hifens "-" e substitui por "(ul)"
+        if (selectedText.includes("-")) {
+            let newText = selectedText.replace(/-/g, "(ul)");
+            
+            // Atualiza o conteúdo do textarea com o novo texto sem perder o restante do conteúdo
+            textarea.setRangeText(newText, start, end, 'end');
+        }
+    } else if (event.altKey && event.key.toLowerCase() === atalhos["ul"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["ul"]["marcador"]); // Insere o texto "(ul)"
+    }
+
+    if (event.altKey && event.ctrlKey && event.key === atalhos["ol"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        
+        // Pega a posição de início e fim da seleção de texto
+        let start = textarea.selectionStart;
+        let end = textarea.selectionEnd;
+        
+        // O texto selecionado
+        let selectedText = textarea.value.substring(start, end);
+        
+        // Processa linhas individualmente para melhor controle
+        let lines = selectedText.split('\n');
+        let processedLines = lines.map(line => {
+            // Casos a tratar:
+            // 1. "10.Texto" ou "a.Texto" - número/letra seguido de ponto sem espaço
+            // 2. "10. Texto" ou "a. Texto" - número/letra seguido de ponto com espaço
+            // 3. "10)Texto" ou "a)Texto" - número/letra seguido de parêntese sem espaço
+            // 4. "10) Texto" ou "a) Texto" - número/letra seguido de parêntese com espaço
+            // 5. "10-Texto" ou "a-Texto" - número/letra seguido de hífen sem espaço
+            // 6. "10- Texto" ou "a- Texto" - número/letra seguido de hífen com espaço
+            // 7. "10 -Texto" ou "a -Texto" - número/letra, espaço e hífen sem espaço
+            // 8. "10 - Texto" ou "a - Texto" - número/letra, espaço e hífen com espaço
+
+            // Regex para número/letra + espaço + hífen (com ou sem espaço após)
+            if (line.match(/^[ \t]*([a-zA-Z0-9]+)\s+-\s*/)) {
+                return line.replace(/^[ \t]*([a-zA-Z0-9]+)\s+-\s*/, "(ol)");
+            }
+            // Regex para número/letra + ponto/parêntese/hífen (com ou sem espaço após)
+            if (line.match(/^[ \t]*([a-zA-Z0-9]+)[\.\)\-]\s*/)) {
+                return line.replace(/^[ \t]*([a-zA-Z0-9]+)[\.\)\-]\s*/, "(ol)");
+            }
+            // Caso nenhum padrão seja encontrado, retorna a linha sem alteração
+            return line;
+        });
+        let newText = processedLines.join('\n');
+        
+        // Atualiza o conteúdo do textarea com o novo texto sem perder o restante do conteúdo
+        textarea.setRangeText(newText, start, end, 'end');
+    } else if (event.altKey && event.key.toLowerCase() === atalhos["ol"]["tecla"]) {
+        event.preventDefault(); // Evita o comportamento padrão
+        insertTextAtCursor(atalhos["ol"]["marcador"]); // Insere o texto "(ol)"
+    }
+
+    if (event.altKey && event.key.toLowerCase() === atalhos["ref"]["tecla"]) {
+        event.preventDefault();
+        
+        // Get the selected text
+        let start = textarea.selectionStart;
+        let end = textarea.selectionEnd;
+        let selectedText = textarea.value.substring(start, end);
+        
+        if (selectedText) {
+            // If text is selected, wrap it in the reference markup
+            let newText = `(ref [${selectedText}])`;
+            textarea.setRangeText(newText, start, end, 'end');
+        } else {
+            // If no text is selected, insert the empty reference markup
+            insertTextAtCursor(atalhos["ref"]["marcador"]);
+        }
+    }
+});
+
+// ::: FUNÇÃO PARA SALVAR O TRABALHO NO LOCAL STORAGE :::
+function salvarTexto() {
+    const text = textarea.value;
+    localStorage.setItem('textoSalvo', text);
+}
+
+// Carregar o texto salvo ao abrir a página
+function carregarTexto() {
+    const textoSalvo = localStorage.getItem('textoSalvo');
+    if (textoSalvo) {
+        textarea.value = textoSalvo;
+    }
+}
+
+// Configurar o auto-salvamento a cada 5 segundos
+setInterval(salvarTexto, 5000);
+
+window.addEventListener('load', carregarTexto);
+
+
+// ::: PROCESSA TABELA :::
+function parseCell(cell) {
+    let rowspanMatch = cell.match(/\(rowspan=(\d+)\)/);
+    let colspanMatch = cell.match(/\(colspan=(\d+)\)/);
+    let thMatch = cell.match(/\(th\)/);
+
+    let rowspan = rowspanMatch ? parseInt(rowspanMatch[1]) : 1;
+    let colspan = colspanMatch ? parseInt(colspanMatch[1]) : 1;
+    let isHeader = thMatch ? true : false;
+
+    cell = cell
+        .replace(/\(rowspan=\d+\)/, "")
+        .replace(/\(colspan=\d+\)/, "")
+        .replace(/\(th\)/, "")
+        .trim();
+
+    let alignCenter = cell.startsWith(':');
+    if (alignCenter) {
+        cell = cell.slice(1).trim();
+    }
+
+    return { cell, rowspan, colspan, alignCenter, isHeader };
+}
+
+function textToHtmlTable(text, columnSeparator = ";", rowSeparator = ";;") {
+    // Substitui "\;" por valores temporários que não interferem na separação
+    text = text.replace(/\\;/g, "__ESCAPED_SEMICOLON__");
+
+    const rows = text.split(rowSeparator).map(row => row.trim());
+    let html = "<table border='1' align='center'>\n";
+    let table = [];
+
+    rows.forEach((row, rowIndex) => {
+        let cells = row.split(columnSeparator).map(cell => cell.trim());
+        table[rowIndex] = table[rowIndex] || [];
+
+        cells.forEach((cell, colIndex) => {
+            let { cell: cellContent, rowspan, colspan, alignCenter, isHeader } = parseCell(cell);
+
+            if (rowspan > 1) {
+                for (let i = 0; i < rowspan; i++) {
+                    table[rowIndex + i] = table[rowIndex + i] || [];
+                    table[rowIndex + i][colIndex] = {
+                        content: cellContent,
+                        rowspan: rowspan,
+                        colspan: colspan,
+                        merged: i > 0,
+                        alignCenter,
+                        isHeader
+                    };
+                }
+            } else {
+                if (!table[rowIndex][colIndex]) {
+                    table[rowIndex][colIndex] = {
+                        content: cellContent,
+                        rowspan: rowspan,
+                        colspan: colspan,
+                        merged: false,
+                        alignCenter,
+                        isHeader
+                    };
+                }
+            }
+        });
+    });
+
+    table.forEach(row => {
+        html += "  <tr>\n";
+        row.forEach(cell => {
+            if (cell && !cell.merged) {
+                let tag = cell.isHeader ? 'th' : 'td';
+                let style = cell.alignCenter ? ' style="text-align: center;"' : '';
+                html += `    <${tag}${style}${cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : ""}${cell.colspan > 1 ? ` colspan="${cell.colspan}"` : ""}>${converteInlineTags(cell.content)}</${tag}>\n`;
+            }
+        });
+        html += "  </tr>\n";
+    });
+
+    html += "</table>\n\n";
+    html += "<p><br></p>";
+
+    // Reverte os valores temporários para ";"
+    html = html.replace(/__ESCAPED_SEMICOLON__/g, ";");
+    // console.log(html);
+
+    // Converte lista dentro de tabela
+    html = html.replace(/<(td|th)>(.*?)<\/\1>/g, (match, tag, content) => {
+        // Captura o texto antes do primeiro (ul) ou (ol)
+        const beforeList = content.split(/\s*\(ul\)/)[0].split(/\s*\(ol\)/)[0];
+        // console.log(beforeList);
+        const itemsUl = content.split(/\s*\(ul\)/).slice(1); // Divide e ignora a parte antes do primeiro (ul)
+        const itemsOl = content.split(/\s*\(ol\)/).slice(1); // Divide e ignora a parte antes do primeiro (ol)
+        
+        let listHtml = content; // Default to the original content
+        
+        // Função para capitalizar a primeira letra
+        const capitalizarPrimeiraLetra = (text) => {
+            return text.replace(/^\s*([a-záéíóúàèìòùâêîôûãõçñäëïöü])/i, (match, p1) => p1.toUpperCase());
+        }
+        
+        if (itemsUl.length > 0 && itemsUl[0].trim() !== '') {
+            // Capitaliza a primeira letra de cada item da lista não ordenada
+            const listItems = itemsUl.map(item => {
+                const capitalizedItem = capitalizarPrimeiraLetra(item.trim());
+                return `\n        <li>${capitalizedItem}</li>`;
+            }).join('');
+            
+            listHtml = `${beforeList}\n      <ul>${listItems}\n      </ul>\n`;
+        } else if (itemsOl.length > 0 && itemsOl[0].trim() !== '') {
+            // Cria uma cópia para poder modificar o array
+            let modifiedItems = [...itemsOl];
+            let listStyle = '';
+            
+            // Verifica se o primeiro item tem um marcador de estilo
+            if (modifiedItems[0].startsWith('(x)')) {
+                modifiedItems[0] = modifiedItems[0].replace(/^\(x\)\s*/, '');
+                listStyle = 'lower-alpha';
+            } else if (modifiedItems[0].startsWith('(X)')) {
+                modifiedItems[0] = modifiedItems[0].replace(/^\(X\)\s*/, '');
+                listStyle = 'upper-alpha';
+            } else if (modifiedItems[0].startsWith('(i)')) {
+                modifiedItems[0] = modifiedItems[0].replace(/^\(i\)\s*/, '');
+                listStyle = 'lower-roman';
+            } else if (modifiedItems[0].startsWith('(I)')) {
+                modifiedItems[0] = modifiedItems[0].replace(/^\(I\)\s*/, '');
+                listStyle = 'upper-roman';
+            } else if (modifiedItems[0].startsWith('(0)')) {
+                modifiedItems[0] = modifiedItems[0].replace(/^\(0\)\s*/, '');
+                listStyle = 'decimal-leading-zero';
+            }
+            
+            // Capitaliza a primeira letra de cada item da lista ordenada
+            const listItems = modifiedItems.map(item => {
+                const capitalizedItem = capitalizarPrimeiraLetra(item.trim());
+                return `\n        <li>${capitalizedItem}</li>`;
+            }).join('');
+            
+            // Aplica o estilo apropriado
+            if (listStyle) {
+                listHtml = `${beforeList}\n      <ol style="list-style-type: ${listStyle};">${listItems}\n      </ol>\n`;
+            } else {
+                listHtml = `${beforeList}\n      <ol>${listItems}\n      </ol>\n`;
+            }
+        }
+
+        return `<${tag}>${listHtml}</${tag}>`;
+    });
+
+    return html;
+}
+
+function handleFileSelect(input) {
+    if (input.files && input.files[0]) {
+        input.classList.add('file-selected');
+        carregarPdf();
+    }
+}
