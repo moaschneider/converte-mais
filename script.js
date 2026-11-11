@@ -171,7 +171,7 @@ function generateText() {
         // Sort references alphabetically
         const sortedReferences = references.sort((a, b) => a.localeCompare(b, 'pt-BR'));
         referenciasDiv.innerHTML = '<ul>\n' + 
-            sortedReferences.map(ref => `\t<li>${ref}</li>`).join('\n') + 
+            sortedReferences.map(ref => `  <li>${ref}</li>`).join('\n') + 
             '\n</ul>';
         referenciasContainer.style.display = 'block';
     } else {
@@ -210,8 +210,12 @@ function processarParagrafos(paragraphs) {
     }
 
     else if (paragraph.startsWith('(codeblock)')) {
-            const codeblockContent = paragraph.replace('(codeblock)', '').trim();
-            htmlOutput += `<div style="background: #ffffff; border: solid gray; border-width: 0.01em 0.01em 0.01em 0.8em; padding: 0.02em 0.6em; overflow: auto; width: auto;">\n\t<pre style="margin: 0; line-height: 125%;">${converteHtmlToEntityNames(codeblockContent)}</pre>\n</div>\n\n`;
+        
+        const codeblockContent = paragraph.replace('(codeblock)', '').trim();
+        
+        htmlOutput += `<div style="background: #ffffff; border: solid gray; border-width: 0.01em 0.01em 0.01em 0.8em; padding: 0.02em 0.6em; overflow: auto; width: auto;">\n\n`;
+            
+        htmlOutput += `  <pre style="margin: 0; line-height: 125%;">${converteHtmlToEntityNames(codeblockContent)}</pre>\n\n</div>\n\n`;
     }
     
     else {
@@ -235,14 +239,14 @@ function processarParagrafos(paragraphs) {
             const boxContent = paragraph.replace('(box)', '').trim();
             
             // Envolve o conteúdo com a tag <div>
-            htmlOutput += `<div style="margin: 1rem 0rem; padding: 1rem 1rem 0rem 1rem; border: 2px solid #dfdfdf; background-color:#f2f2f2">\n\n\t${boxContent}`;
+            htmlOutput += `<div style="margin: 2rem 0rem; padding: 1rem 1rem 1rem 1rem; border: 2px solid #dfdfdf; background-color:#f2f2f2">\n\n  ${boxContent}`;
 
         } else if (paragraph.startsWith('(/box)')) {
             // Remove o marcador (/box) sem remover espaços
             const boxContent = paragraph.replace('(/box)', '').trim();
             
             // Envolve o conteúdo com a tag </div>
-            htmlOutput += `${boxContent}</div>\n\n`;
+            htmlOutput += `${boxContent}</div>\n\n\n`;
 
 
         } else if (paragraph.startsWith('(block)')) {
@@ -289,7 +293,7 @@ function processarParagrafos(paragraphs) {
             
             
             
-            htmlOutput += '<ul>\n' + listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ul>\n\n';
+            htmlOutput += '<ul>\n' + listItemsPrimeiraMaiuscula.map(item => `  <li>${converteInlineTags(item)}</li>`).join('\n') + '\n</ul>\n\n';
 
         } else if (paragraph.startsWith('(ol)')) {
             // Split by (ol) and keep non-empty items
@@ -330,11 +334,11 @@ function processarParagrafos(paragraphs) {
             // Render the list with the appropriate style
             if (listStyle) {
                 htmlOutput += `<ol style="list-style-type: ${listStyle};">\n` + 
-                    listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + 
+                    listItemsPrimeiraMaiuscula.map(item => `  <li>${converteInlineTags(item)}</li>`).join('\n') + 
                     '\n</ol>\n\n';
             } else {
                 htmlOutput += '<ol>\n' + 
-                    listItemsPrimeiraMaiuscula.map(item => `\t<li>${converteInlineTags(item)}</li>`).join('\n') + 
+                    listItemsPrimeiraMaiuscula.map(item => `  <li>${converteInlineTags(item)}</li>`).join('\n') + 
                     '\n</ol>\n\n';
             }
 
@@ -355,24 +359,27 @@ function processarParagrafos(paragraphs) {
             const imgDescriptionDestacado = destacarPalavras(imgDescription);
 
             // CÓDIGO PARA ADICIONAR URL DA FOTO VALENDO
-            htmlOutput += `<figure>\n`;
+            htmlOutput += `<figure style="text-align: center;">\n\n`;
             
             let imgSourceUrl;
             
             if (imgUrl === 'URL'){
-                htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="https://placehold.co/500x300/32ab53/black.png?text=${imgFigureCaptionDestacado}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
-                htmlListaDeImagens += `<img src="https://placehold.co/500x300/32ab53/black.png?text=${imgFigureCaptionDestacado}">\n`;
+                htmlOutput += `  <img src="https://placehold.co/500x300/32ab53/black.png?text=${imgFigureCaptionDestacado}" alt="Descrição abaixo da imagem.">\n\n`;
+                htmlListaDeImagens += `<img src="https://placehold.co/500x300/32ab53/black.png?text=${imgFigureCaptionDestacado}">\n\n`;
             } else {
-                htmlOutput += `\t<p style="text-align: center;">\n\t\t<img src="${imgUrl || ''}" alt="Descrição abaixo da imagem.">\n\t</p>\n`;
+                htmlOutput += `  <img src="${imgUrl || ''}" alt="Descrição abaixo da imagem.">\n\n`;
                 htmlListaDeImagens += `<a href="#${contador}" onclick="copiaUrl('${imgUrl}')"><img id="${contador}" src="${imgUrl || ''}"></a>\n`;
                 imgSourceUrl = imgUrl;
             }
             contador++;
 
-            htmlOutput += `\t<p style="text-align: center;">Figura ${autoFigureNumber} - ${imgFigureCaptionDestacado || '\n'}<br>\n\t\t<sub>Fonte: ${imgSourceUrl || imgSource || ''}</sub>\n\t</p>\n`;
-            htmlOutput += `\t<p>\n\t\t<sub>Descrição da imagem: ${imgDescriptionDestacado || ''}</sub>\n\t</p>\n`;
-            htmlOutput += `</figure>\n\n`;
-            htmlOutput += `<p><br></p>\n\n`;
+            htmlOutput += `  <p>Figura ${autoFigureNumber} - ${imgFigureCaptionDestacado || '\n'}</p>\n\n`;
+            
+            htmlOutput += `  <p><sub>Fonte: ${imgSourceUrl || imgSource || ''}</sub></p>\n\n`;
+
+            htmlOutput += `  <p style="text-align: left;"><sub>Descrição da imagem: ${imgDescriptionDestacado || ''}</sub></p>\n\n`;
+
+            htmlOutput += `</figure>\n\n\n`;
 
         } else if (paragraph.startsWith('(pcent)')){
             const paragraphCentralized = paragraph.replace('(pcent)', '').trim();
@@ -393,7 +400,7 @@ function processarParagrafos(paragraphs) {
         // Sort references alphabetically
         const sortedReferences = references.sort((a, b) => a.localeCompare(b, 'pt-BR'));
         referenciasDiv.innerHTML = '<ul>\n' + 
-            sortedReferences.map(ref => `\t<li>${ref}</li>`).join('\n') + 
+            sortedReferences.map(ref => `  <li>${ref}</li>`).join('\n') + 
             '\n</ul>';
     }
 }
@@ -431,7 +438,8 @@ function converteTitulos(text) {
         if (htmlOutput === '') {
             return `<h${level}>${tituloPalavrasProibidas.trim()}</h${level}>`;
         } else {
-            return `<p><br></p>\n\n<h${level}>${tituloPalavrasProibidas.trim()}</h${level}>`;
+            return `<h${level}>${tituloPalavrasProibidas.trim()}</h${level}>`;
+            // return `<p><br></p>\n\n<h${level}>${tituloPalavrasProibidas.trim()}</h${level}>`;
         }
     }
 

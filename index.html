@@ -1,124 +1,74 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Converte Mais 2.0</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lettro - edição, normalização e conversão de textos</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="styles.css">
 
-    <!-- Sora -->
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
-
-    <!-- Krona One -->
-    <link href="https://fonts.googleapis.com/css2?family=Krona+One&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="styles.css">
-  
 </head>
+
 <body>
 
-    <div class="margin">
-        <header>
-            <!-- &#8239; é um non-breaking space, para ajudar no espaço entre as letras "r" e "t" -->
-            <h1>Conver&#8239;te Mais</h1>
-            <div>
-                <!-- <p><a href="#" onclick="showInstructions()">Como usar?</a></p> -->
-            </div>
-        </header>
+  <header>
+    <h1>LETTRO</h1>
+    <div>
+      <span>COMO USAR</span>
+      <span>ATALHOS</span>
+      <span>LOGIN</span>
+    </div>
+  </header>
 
-        <main>
-            <div class="entry-data" id="entry-data-content">
+  <main>
+    <div class="entry-data">
 
-                <div id="instructions">
-                    <p>Cole o texto no campo de entrada abaixo e clique no botão "Gerar". Pronto, seu texto já está convertido!</p>
-                    <p>A ferramenta edita ou alerta sobre:</p>
-                    <ul>
-                        <li>Espaços duplos</li>
-                        <li>Quebras de linha excessivas</li>
-                        <li>Palavras não recomendadas</li>
-                        <li>Números colados a unidades de medida</li>
-                        <li>Palavras quebradas por hifenização</li>
-                        <li>Perguntas retóricas</li>
-                    </ul>
+      <textarea id="textInput"></textarea>
 
-                    <p><a href="#" onclick="showExample(); return false;">Clique aqui</a> e veja um exemplo rápido!</p>
-                    
-                    <!-- <p>Para converter o texto em HTML, use marcadores:</p>
-                    <ul>
-                        <li>(p) para parágrafo</li>
-                        <li>(st) para negrito</li>
-                        <li>(em) para itálico</li>
-                        <li>(ul) para lista não ordenada</li>
-                        <li>(ol) para lista ordenada</li>
-                        <li>(blockquote) para citação longa</li>
-                        <li>(table) para tabela</li>
-                        <li>(img) para imagem</li>
-                        <li>(code) para código</li>
-                        <li>(codeblock) para código formatado</li>
-                        <li>(pre) para texto formatado</li>
-                        <li>(br) para quebra de linha</li>
-                        <li>(hr) para linha horizontal</li>
-                        <li>(ref) para marcar uma referência</li>
-                    </ul> -->
+      <div class="buttons">
+        <button id="copyTextButton">Copiar Texto</button>
+        <button id="copyHtmlButton">Copiar HTML</button>
+        <button id="generateButton" class="tooltip" onclick="generateText()">Gerar
+          <span class="tooltiptext">Ctrl + Enter</span>
+        </button>
+      </div>
 
-                    </div>  
-                
-                <textarea id="textInput" class="border" rows="10" cols="50" placeholder="">
-                </textarea><br><br>
-
-                <div id="" class="buttons">
-                    <div class="buttons__functions">
-                        <div class="buttons__functions__copy">
-                            <button id="copyTextButton">Copiar Texto</button>
-                            <button id="copyHtmlButton">Copiar HTML</button>
-                            <button id="shortcutsButton">Atalhos</button>
-                        </div>
-                    </div>
-                    <button id="generateButton" class="tooltip" onclick="generateText()">Gerar
-                        <span class="tooltiptext">Ctrl + Enter</span>
-                    </button>
-                </div>
-                
-
-                <div class="textos">
-                    <div class="textos__html border">
-                        <!-- <h4>TEXTO SEM FORMATAÇÃO</h4> -->
-                        <div id="htmlResultado"></div>
-                    </div>
-                    <div class="textos__html border" id="referenciasContainer" style="display: none;">
-                        <h4>REFERÊNCIAS</h4>
-                        <div id="referencias" class="textos__html__gerado">
-                        </div>
-                    </div>
-                    <div class="textos__html border">
-                        <h4>HTML</h4>
-                        <pre id="htmlCodigo" class="textos__html__gerado"></pre>
-                    </div>
-                    <div class="textos__html border">
-                        <h4>LISTA DE IMAGENS</h4>
-                        <div id="htmlListaDeImagens" class="textos__html__gerado">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="entry-data" id="entry-data-pdf">
-                <iframe id="iframe" class="border"></iframe>
-                <div class="pdf-controls">
-                    <input type="file" id="fileInput" accept=".pdf" class="file-input" onchange="handleFileSelect(this)" />
-                </div>
-            </div>
-        </main>
-
-        <footer>
-            <p class="author">Desenvolvido por Moa Schneider • Versão 2.2</p>
-        </footer>
-        
+      <div class="textos">
+        <div id="formatadoContainer" class="textos__html border">
+          <div id="htmlResultado"></div>
+        </div>
+        <div id="referenciasContainer" class="textos__html border" style="display: none;">
+          <h6>REFERÊNCIAS</h6>
+          <div id="referencias" class="textos__html__gerado">
+          </div>
+        </div>
+        <div class="textos__html border">
+          <h6>HTML</h6>
+          <pre id="htmlCodigo" class="textos__html__gerado"></pre>
+        </div>
+        <div class="textos__html border">
+          <h6>LISTA DE IMAGENS</h6>
+          <div id="htmlListaDeImagens" class="textos__html__gerado">
+          </div>
+        </div>
+      </div>
     </div>
 
-    <script src="script.js"></script>
+    <div class="entry-data" id="entry-data-pdf">
+      <iframe id="iframe"></iframe>
+      <div class="pdf-controls">
+        <input type="file" id="fileInput" accept=".pdf" class="file-input" onchange="handleFileSelect(this)" />
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p class="author">Desenvolvido por Moa Schneider • Versão 3.0</p>
+  </footer>
+
+  <script src="script.js"></script>
 
 </body>
+
 </html>
