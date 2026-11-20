@@ -13,7 +13,7 @@
 <body>
 
   <header>
-    <h1>LETTRO</h1>
+    <h1>LETRANTE</h1>
     <div>
       <span>COMO USAR</span>
       <span>ATALHOS</span>
@@ -29,6 +29,7 @@
       <div class="buttons">
         <button id="copyTextButton">Copiar Texto</button>
         <button id="copyHtmlButton">Copiar HTML</button>
+        <button id="openPdfPanel" onclick="openPdfPanel()">Carregar PDF</button>
         <button id="generateButton" class="tooltip" onclick="generateText()">Gerar
           <span class="tooltiptext">Ctrl + Enter</span>
         </button>
@@ -55,10 +56,13 @@
       </div>
     </div>
 
-    <div class="entry-data" id="entry-data-pdf">
-      <iframe id="iframe"></iframe>
+    <div id="pdfPanel" class="entry-data">
+      <div class="pdf-viewer">
+        <iframe id="iframe" title="Visualização do PDF"></iframe>
+      </div>
       <div class="pdf-controls">
-        <input type="file" id="fileInput" accept=".pdf" class="file-input" onchange="handleFileSelect(this)" />
+        <label for="fileInput" id="fileInputLabel" class="file-input">Selecionar PDF</label>
+        <input type="file" id="fileInput" accept=".pdf" hidden>
       </div>
     </div>
   </main>

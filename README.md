@@ -2,6 +2,9 @@
 
 O **Converte Mais** é uma ferramenta web que ajuda a transformar conteúdos de PDFs em texto formatado e HTML. O usuário trabalha com marcadores simples inseridos no texto, e a aplicação converte esse conteúdo para facilitar sua reutilização em documentos e plataformas de ensino.
 
+
+> **Em atualização:** A ferramenta está passando por uma remodelação geral, que inclui mudanças nos estilos, nas cores e na identidade visual, além da atualização e expansão de funcionalidades. O objetivo é tornar a experiência mais moderna, clara e prática.
+
 ## Funcionalidades
 
 - Carregamento e visualização de um PDF ao lado do editor de texto, sem precisar alternar entre janelas.
@@ -96,4 +99,4 @@ Os marcadores são escritos no próprio texto. Use `(p)` para separar parágrafo
 
 ---
 
-*Última autalização: 28/09/2026*
+*Última autalização: 20/11/2026*

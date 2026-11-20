@@ -165,6 +165,7 @@ footer {
 
 #copyTextButton,
 #copyHtmlButton,
+#openPdfPanel,
 #generateButton,
 #shortcutsButton {
     font-family: var(--regular-font);
@@ -182,6 +183,7 @@ footer {
 }
 
 #copyTextButton,
+#openPdfPanel,
 #copyHtmlButton {
     color: white;
     background-color: black;
@@ -233,7 +235,8 @@ footer {
 }
 
 #htmlListaDeImagens img {
-    width: 240px;
+    width: 120px;
+    /* height: 120px; */
     object-fit: cover;
 }
 
@@ -252,6 +255,7 @@ td, th {
 
 img {
     max-width: 100%;
+    border-radius: 12px;
 }
 
 .tooltip {
@@ -297,73 +301,47 @@ blockquote {
 }
 
 #iframe {
-    max-width: 100%;
+    display: block;
     width: 100%;
-    height: var(--height);
-    resize: vertical;
+    height: 100%;
     border: 0;
 }
 
-@media screen and (max-width: 1100px) {
-    main {
-        display: block;
-        min-height: var(--height);
-    }
-
-    #entry-data-pdf {
-        display: none;
-    }
+.pdf-viewer {
+    max-width: 100%;
+    width: 100%;
+    height: var(--height);
+    min-height: 150px;
+    overflow: auto;
+    resize: vertical;
 }
 
 .pdf-controls {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    align-items: center;
-    margin-top: 10px;
+    margin-top: 12px;
 }
 
 .file-input {
-    font-size: 12px;
+    display: inline-block;
+    font-family: var(--regular-font);
+    font-size: 0.8rem;
     font-weight: bold;
+    text-transform: uppercase;
     color: white;
     background-color: black;
-    border: 0.5px solid black;
-    /* border-radius: 30px; */
+    border: 0;
     padding: 8px 16px;
     cursor: pointer;
 }
 
-.file-input::-webkit-file-upload-button {
+#pdfPanel {
     display: none;
 }
 
-/* Esconde o texto padrão do input */
-.file-input {
-    color: transparent;
-    /* Torna o texto do input transparente */
-}
-
-.file-input::before {
-    content: 'Selecionar PDF';
-    display: inline-block;
-    cursor: pointer;
-    color: white;
-    /* Restaura a cor do texto apenas para o pseudo-elemento */
-    position: absolute;
-}
-
-.file-input.file-selected::before {
-    content: attr(data-file-name);
-}
-
-.pdf-button {
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
-    background-color: black;
-    border: 0.5px solid black;
-    /* border-radius: 30px; */
-    padding: 8px 16px;
-    cursor: pointer;
-}
+/* Usar 1080 px */
+/* @media screen and (max-width: 1100px) {
+    #pdfPanel {
+        display: none;
+    }
+} */

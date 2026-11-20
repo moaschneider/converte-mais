@@ -1,46 +1,32 @@
-const instructionsDiv =document.getElementById('instructions');
+const pdfPanel = document.getElementById('pdfPanel');
+const openPdfPanelButton = document.getElementById('openPdfPanel');
+const textInput = document.getElementById('textInput');
 
-function showInstructions() {
-    const isHidden = instructionsDiv.style.display === 'none' || instructionsDiv.style.display === '';
-    instructionsDiv.style.display = isHidden ? 'block' : 'none';
-}
-
-function showExample() {
-    const textarea = document.getElementById('textInput');
-    const textoExemplo = ` # Tutorial "Converte Mais" #(p)
-    Bora entender como é fácil e prático de usar. Basicamente você só precisa colar o texto aqui e clicar no botão "Gerar" para que (st) várias funcionalidades (st) já entrem em ação. (p) `;
-    textarea.value = textoExemplo.trim();
-    textarea.focus();
-}
-
-// Função para carregar a URL do localStorage
-function carregarPdf() {
-    const input = document.getElementById('fileInput');
-    if (input.files && input.files[0]) {
-        const fileURL = URL.createObjectURL(input.files[0]);
-        const iframe = document.getElementById('iframe');
-        iframe.src = fileURL;
-        
-        // Atualiza o texto do botão para mostrar o nome do arquivo
-        input.setAttribute('data-file-name', input.files[0].name.toUpperCase());
+function openPdfPanel() {
+    if (pdfPanel.style.display === "none") {
+        pdfPanel.style.display = "block";
+        document.getElementById('textInput').style.resize = "both";
+    }
+    else {
+        pdfPanel.style.display = "none";
+        textInput.style.resize = "vertical";
+        textInput.style.width = "100%";
     }
 }
 
-// Evento para carregar o PDF do arquivo selecionado
-document.getElementById("fileInput").addEventListener("change", function(event) {
-const file = event.target.files[0];
-// if (file && file.type === "application/pdf") {
-    const fileURL = URL.createObjectURL(file); // Cria uma URL temporária para o arquivo
-    const iframe = document.getElementById("iframe");
-    iframe.src = fileURL; // Define a URL como fonte do iframe
-// } else {
-//   alert("Por favor, selecione um arquivo PDF.");
-// }
+// Configuração do painel de PDF
+const fileInput = document.getElementById('fileInput');
+const pdfFrame = document.getElementById('iframe');
+const fileInputLabel = document.getElementById('fileInputLabel');
+
+fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+
+    if (!file) return;
+
+    pdfFrame.src = URL.createObjectURL(file);
+    fileInputLabel.textContent = file.name.toUpperCase();
 });
-
-// Carregar automaticamente a URL salva ao iniciar a página
-window.onload = carregarPdf;
-
 
 // Variáveis que recebem os diversos processamentos e que vão ser inseridas nas divs
 let htmlOutput = '';
@@ -78,8 +64,8 @@ function converteInlineTags(text) {
     }      
 
 
-    // DESABILITADA POR QUESTÃO DO <SPAN> MAS FUNCIONANDO
-    // Solução para não evitar quebrar frases pequenas dentro de células de tabela
+    // DESABILITADA MAS FUNCIONANDO
+    // Solução para não quebrar frases dentro de células de tabela (colocar (pre) no início e no fim da frase)
     // text = text.replace(/\(pre\)(.*?)\(pre\)/g, '<span style="white-space: nowrap;">$1</span>'); // Insere tag <pre>
 
     text = destacarPalavras(text);
@@ -102,11 +88,11 @@ function destacarPalavras(texto) {
     palavrasProibidas.forEach(palavra => {
         // Tratar o ponto de interrogação separadamente
         if (palavra === '\\?') {
-            texto = texto.replace(/([\p{L}\w]+)\?/gu, '<span style="color: red; font-weight: bold;">$1?</span>');
+            texto = texto.replace(/([\p{L}\w]+)\?/gu, '<span style="color: red;">$1?</span>');
         } else {
             // Regex com bordas de palavras para outras palavras proibidas
             const regex = new RegExp(`\\b(${palavra})\\b`, 'gi');
-            texto = texto.replace(regex, '<span style="color: red; font-weight: bold;">$1</span>');
+            texto = texto.replace(regex, '<span style="color: red;">$1</span>');
         }
     });
     
@@ -125,7 +111,7 @@ function destacarPalavras(texto) {
     texto = texto.replace(/(\w+[-][\s]+\w+)/gi, '<span style="color: red; font-weight: bold;">$1</span>');
 
     // Elimina hífen e une as duas partes de palavra quebrada por hifenização. Status: desabilitada, está funcionando, só tem que avaliar pra talvez colocar em um botão.
-    // texto = texto.replace(/(\w+)[-][\s+](\w+)/gi, '$1$2');
+    texto = texto.replace(/(\w+)[-][\s+](\w+)/gi, '$1$2');
 
     return texto;    
 }
@@ -140,13 +126,14 @@ function limpaTexto(texto){
 // ::: 1 - RECEBE O TEXTO, REMOVE ESPAÇOS E QUEBRAS EXCESSIVAS E PROCESSA PARÁGRAFOS :::
 function generateText() {
     
-    let textInput = document.getElementById('textInput').value;
+    // let textInput = document.getElementById('textInput').value;
+    let textInputValue = textInput.value;
     
     // Reset references array at the start of each generation
     references = [];
     
     // Divide o texto em parágrafos usando (p)
-    const paragraphs = textInput.split('(p)').map(p => p.trim()).filter(p => p.length > 0);
+    const paragraphs = textInputValue.split('(p)').map(p => p.trim()).filter(p => p.length > 0);
     
     // Variáveis que recebem os diversos processamentos ao longo do script e que vão ser inseridas nas divs
     htmlOutput = '';
@@ -158,10 +145,12 @@ function generateText() {
     // Mostra a div com os previews de texto e html
     document.querySelector('.textos').style.display = 'flex';
 
-    const htmlOutputAjustado = removeEspacamentoDuplicado(htmlOutput);
+    // const htmlOutputAjustado = removeEspacamentoDuplicado(htmlOutput);
     
-    htmlCodigoDiv.textContent = htmlOutputAjustado;
-    htmlResultadoDiv.innerHTML = htmlOutputAjustado;
+    // htmlCodigoDiv.textContent = htmlOutputAjustado;
+    htmlCodigoDiv.textContent = htmlOutput;
+    // htmlResultadoDiv.innerHTML = htmlOutputAjustado;
+    htmlResultadoDiv.innerHTML = htmlOutput;
     htmlListaDeImagensDiv.innerHTML = htmlListaDeImagens;
 
     // Add references to the references div
@@ -179,13 +168,13 @@ function generateText() {
     }
 }
 
-function removeEspacamentoDuplicado(html) {
-    // Regex que encontra uma ou mais repetições consecutivas de <p><br></p>
-    const regex = /(<p><br><\/p>\s*)+/g;
+// function removeEspacamentoDuplicado(html) {
+//     // Regex que encontra uma ou mais repetições consecutivas de <p><br></p>
+//     const regex = /(<p><br><\/p>\s*)+/g;
     
-    // Substitui qualquer repetição por apenas uma ocorrência
-    return html.replace(regex, '<p><br></p>\n\n');
-}
+//     // Substitui qualquer repetição por apenas uma ocorrência
+//     return html.replace(regex, '<p><br></p>\n\n');
+// }
 
 
 // ::: 2 - PROCESSA OS PARÁGRAFOS ::: 
@@ -351,8 +340,15 @@ function processarParagrafos(paragraphs) {
             const parts = imgContent.split('|').map(item => item.trim());
             const imgUrl = parts[0];
             const imgFigureCaption = parts[1];
-            const imgSource = parts[2];
+            let imgSource = parts[2];
             const imgDescription = parts[3];
+            let imgBackgroundColor = parts[4];
+            let imgTextColor = parts[5];
+
+            if (imgBackgroundColor === "FUNDO") imgBackgroundColor = "yellow"; 
+            
+            if (imgTextColor === "TEXTO") imgTextColor = "black";
+
 
             // Palavras proibidas em legenda e descrição de fotos
             const imgFigureCaptionDestacado = destacarPalavras(imgFigureCaption);
@@ -364,22 +360,24 @@ function processarParagrafos(paragraphs) {
             let imgSourceUrl;
             
             if (imgUrl === 'URL'){
-                htmlOutput += `  <img src="https://placehold.co/500x300/32ab53/black.png?text=${imgFigureCaptionDestacado}" alt="Descrição abaixo da imagem.">\n\n`;
-                htmlListaDeImagens += `<img src="https://placehold.co/500x300/32ab53/black.png?text=${imgFigureCaptionDestacado}">\n\n`;
+                htmlOutput += `  <img src="https://placehold.co/500x300/${imgBackgroundColor}/${imgTextColor}.png?text=${imgFigureCaptionDestacado}" alt="Descrição abaixo da imagem.">\n\n`;
+                htmlListaDeImagens += `<img src="https://placehold.co/500x300/${imgBackgroundColor}/${imgTextColor}.png?text=${imgFigureCaptionDestacado}">\n\n`;
             } else {
                 htmlOutput += `  <img src="${imgUrl || ''}" alt="Descrição abaixo da imagem.">\n\n`;
                 htmlListaDeImagens += `<a href="#${contador}" onclick="copiaUrl('${imgUrl}')"><img id="${contador}" src="${imgUrl || ''}"></a>\n`;
-                imgSourceUrl = imgUrl;
+                // imgSourceUrl = imgUrl;
+
+                if (imgSource === "FONTE") imgSource = "";
             }
             contador++;
 
             htmlOutput += `  <p>Figura ${autoFigureNumber} - ${imgFigureCaptionDestacado || '\n'}</p>\n\n`;
             
-            htmlOutput += `  <p><sub>Fonte: ${imgSourceUrl || imgSource || ''}</sub></p>\n\n`;
+            htmlOutput += `  <p><sub>Fonte: ${imgSource || imgUrl}</sub></p>\n\n`;
 
             htmlOutput += `  <p style="text-align: left;"><sub>Descrição da imagem: ${imgDescriptionDestacado || ''}</sub></p>\n\n`;
 
-            htmlOutput += `</figure>\n\n\n`;
+            htmlOutput += `</figure>\n\n`;
 
         } else if (paragraph.startsWith('(pcent)')){
             const paragraphCentralized = paragraph.replace('(pcent)', '').trim();
@@ -463,7 +461,7 @@ const atalhos = {
     ul: {marcador: "(ul)", tecla: "d"},
     ol: {marcador: "(ol)", tecla: "f"},
     th: {marcador: "(th)", tecla: "h"},
-    img: {marcador: "\n(img | URL | LEGENDA | FONTE | DESCRIÇÃO)(p)\n", tecla: "i"},
+    img: {marcador: "\n(img | URL | LEGENDA | FONTE | DESCRIÇÃO | FUNDO | TEXTO)(p)\n", tecla: "i"},
     thcentralizado: {marcador: "(th):", tecla: "j"},
     blockquote: {marcador: "\n(p)(block)(p)\n\n(p)(/block)(p)\n", tecla: "k", antes: "\n(p)(block)(p)\n\n", depois: "\n\n(p)(/block)(p)\n" },
     hr: {marcador: "(linha)", tecla: "l"},
@@ -522,23 +520,23 @@ function copiarConteudoVisivel() {
 // Evento de clique no botão para copiar
 document.getElementById("copyTextButton").addEventListener("click", copiarConteudoVisivel);
 
-const textarea = document.getElementById('textInput');
+// const textarea = document.getElementById('textInput');
 
 // Função para inserir o marcador na posição atual do cursor
 function insertTextAtCursor(text) {
-    const startPos = textarea.selectionStart;
-    const endPos = textarea.selectionEnd;
+    const startPos = textInput.selectionStart;
+    const endPos = textInput.selectionEnd;
 
     // Insere o texto na posição atual do cursor
-    const beforeText = textarea.value.substring(0, startPos);
-    const afterText = textarea.value.substring(endPos, textarea.value.length);
-    textarea.value = beforeText + text + afterText;
+    const beforeText = textInput.value.substring(0, startPos);
+    const afterText = textInput.value.substring(endPos, textInput.value.length);
+    textInput.value = beforeText + text + afterText;
 
     // Reposiciona o cursor após o texto inserido
-    textarea.selectionStart = textarea.selectionEnd = startPos + text.length;
+    textInput.selectionStart = textInput.selectionEnd = startPos + text.length;
 
     // Foco de volta para a área de texto
-    textarea.focus();
+    textInput.focus();
 }
 
 // Definições das teclas de atalho
@@ -550,7 +548,7 @@ addEventListener('keydown', function(event){
 })
 
 
-textarea.addEventListener('keydown', function(event) {
+textInput.addEventListener('keydown', function(event) {
     
     if (event.altKey && event.ctrlKey && event.key.toLowerCase() === atalhos["p"]["tecla"]) {
         // event.preventDefault(); // Evita o comportamento padrão
@@ -668,84 +666,76 @@ textarea.addEventListener('keydown', function(event) {
         event.preventDefault(); // Evita o comportamento padrão
         
         // Pega a posição de início e fim da seleção de texto
-        let start = textarea.selectionStart;
-        let end = textarea.selectionEnd;
+        let start = textInput.selectionStart;
+        let end = textInput.selectionEnd;
         
         // O texto selecionado
-        let selectedText = textarea.value.substring(start, end);
+        let selectedText = textInput.value.substring(start, end);
         
         // Adiciona os marcadores (p)(table) antes e depois da seleção
         let before = atalhos["table"]["antes"];
         let after = atalhos["table"]["depois"];
         let newText = before + selectedText + after;
         
-        // Atualiza o conteúdo do textarea com os marcadores
-        textarea.setRangeText(newText, start, end, 'end');
+        // Atualiza o conteúdo do textInput com os marcadores
+        textInput.setRangeText(newText, start, end, 'end');
     }
 
     if (event.altKey && event.key === atalhos["box"]["tecla"]) {
         event.preventDefault(); // Evita o comportamento padrão
         
         // Pega a posição de início e fim da seleção de texto
-        let start = textarea.selectionStart;
-        let end = textarea.selectionEnd;
+        let start = textInput.selectionStart;
+        let end = textInput.selectionEnd;
         
         // O texto selecionado
-        let selectedText = textarea.value.substring(start, end);
+        let selectedText = textInput.value.substring(start, end);
         
         // Adiciona os marcadores (box) antes e depois da seleção
         let before = atalhos["box"]["antes"];
         let after = atalhos["box"]["depois"];
         let newText = before + selectedText + after;
         
-        // Atualiza o conteúdo do textarea com os marcadores
-        textarea.setRangeText(newText, start, end, 'end');
+        // Atualiza o conteúdo do textInput com os marcadores
+        textInput.setRangeText(newText, start, end, 'end');
     } 
 
     if (event.altKey && event.key === atalhos["blockquote"]["tecla"]) {
         event.preventDefault(); // Evita o comportamento padrão
         
         // Pega a posição de início e fim da seleção de texto
-        let start = textarea.selectionStart;
-        let end = textarea.selectionEnd;
+        let start = textInput.selectionStart;
+        let end = textInput.selectionEnd;
         
         // O texto selecionado
-        let selectedText = textarea.value.substring(start, end);
+        let selectedText = textInput.value.substring(start, end);
         
         // Adiciona os marcadores (block) antes e depois da seleção
         let before = atalhos["blockquote"]["antes"];
         let after = atalhos["blockquote"]["depois"];
         let newText = before + selectedText + after;
         
-        // Atualiza o conteúdo do textarea com os marcadores
-        textarea.setRangeText(newText, start, end, 'end');
+        // Atualiza o conteúdo do textInput com os marcadores
+        textInput.setRangeText(newText, start, end, 'end');
     } 
 
     if (event.altKey && event.ctrlKey && event.key === atalhos["ul"]["tecla"]) {
         event.preventDefault(); // Evita o comportamento padrão
         
         // Pega a posição de início e fim da seleção de texto
-        let start = textarea.selectionStart;
-        let end = textarea.selectionEnd;
+        let start = textInput.selectionStart;
+        let end = textInput.selectionEnd;
         
         // O texto selecionado
-        let selectedText = textarea.value.substring(start, end);
+        let selectedText = textInput.value.substring(start, end);
         
-        // Verifica se há bullets "•" e substitui por "(ul)"
-        if (selectedText.includes("•")) {
-            let newText = selectedText.replace(/•/g, "(ul)");
-            
-            // Atualiza o conteúdo do textarea com o novo texto sem perder o restante do conteúdo
-            textarea.setRangeText(newText, start, end, 'end');
-        }
-        
-        // Verifica se há hifens "-" e substitui por "(ul)"
-        if (selectedText.includes("-")) {
-            let newText = selectedText.replace(/-/g, "(ul)");
-            
-            // Atualiza o conteúdo do textarea com o novo texto sem perder o restante do conteúdo
-            textarea.setRangeText(newText, start, end, 'end');
-        }
+        // Substitui apenas o marcador no início de cada linha selecionada.
+        const newText = selectedText.replace(/^[ \t]*[•-]+/gm, match =>
+            match.replace(/[•-]+$/, "(ul)")
+        );
+
+        // Atualiza o conteúdo uma única vez, preservando o restante do texto.
+        textInput.setRangeText(newText, start, end, 'end');
     } else if (event.altKey && event.key.toLowerCase() === atalhos["ul"]["tecla"]) {
         event.preventDefault(); // Evita o comportamento padrão
         insertTextAtCursor(atalhos["ul"]["marcador"]); // Insere o texto "(ul)"
@@ -755,11 +745,11 @@ textarea.addEventListener('keydown', function(event) {
         event.preventDefault(); // Evita o comportamento padrão
         
         // Pega a posição de início e fim da seleção de texto
-        let start = textarea.selectionStart;
-        let end = textarea.selectionEnd;
+        let start = textInput.selectionStart;
+        let end = textInput.selectionEnd;
         
         // O texto selecionado
-        let selectedText = textarea.value.substring(start, end);
+        let selectedText = textInput.value.substring(start, end);
         
         // Processa linhas individualmente para melhor controle
         let lines = selectedText.split('\n');
@@ -787,8 +777,8 @@ textarea.addEventListener('keydown', function(event) {
         });
         let newText = processedLines.join('\n');
         
-        // Atualiza o conteúdo do textarea com o novo texto sem perder o restante do conteúdo
-        textarea.setRangeText(newText, start, end, 'end');
+        // Atualiza o conteúdo do textInput com o novo texto sem perder o restante do conteúdo
+        textInput.setRangeText(newText, start, end, 'end');
     } else if (event.altKey && event.key.toLowerCase() === atalhos["ol"]["tecla"]) {
         event.preventDefault(); // Evita o comportamento padrão
         insertTextAtCursor(atalhos["ol"]["marcador"]); // Insere o texto "(ol)"
@@ -798,14 +788,14 @@ textarea.addEventListener('keydown', function(event) {
         event.preventDefault();
         
         // Get the selected text
-        let start = textarea.selectionStart;
-        let end = textarea.selectionEnd;
-        let selectedText = textarea.value.substring(start, end);
+        let start = textInput.selectionStart;
+        let end = textInput.selectionEnd;
+        let selectedText = textInput.value.substring(start, end);
         
         if (selectedText) {
             // If text is selected, wrap it in the reference markup
             let newText = `(ref [${selectedText}])`;
-            textarea.setRangeText(newText, start, end, 'end');
+            textInput.setRangeText(newText, start, end, 'end');
         } else {
             // If no text is selected, insert the empty reference markup
             insertTextAtCursor(atalhos["ref"]["marcador"]);
@@ -815,7 +805,7 @@ textarea.addEventListener('keydown', function(event) {
 
 // ::: FUNÇÃO PARA SALVAR O TRABALHO NO LOCAL STORAGE :::
 function salvarTexto() {
-    const text = textarea.value;
+    const text = textInput.value;
     localStorage.setItem('textoSalvo', text);
 }
 
@@ -823,7 +813,7 @@ function salvarTexto() {
 function carregarTexto() {
     const textoSalvo = localStorage.getItem('textoSalvo');
     if (textoSalvo) {
-        textarea.value = textoSalvo;
+        textInput.value = textoSalvo;
     }
 }
 
@@ -982,11 +972,4 @@ function textToHtmlTable(text, columnSeparator = ";", rowSeparator = ";;") {
     });
 
     return html;
-}
-
-function handleFileSelect(input) {
-    if (input.files && input.files[0]) {
-        input.classList.add('file-selected');
-        carregarPdf();
-    }
 }
